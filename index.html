@@ -5,10 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>マイ菜園カレンダー</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon-192.png">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -26,7 +24,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .mnav{display:flex;align-items:center;gap:5px}
 .mnav button{background:rgba(255,255,255,.18);border:none;color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
 .mnav span{font-size:14px;font-weight:500;min-width:72px;text-align:center}
-.hbanner{background:var(--g-dark);padding:7px 12px;display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+/* YEAR FILTER */
+.year-bar{background:var(--g-dark);padding:6px 12px;display:flex;align-items:center;gap:6px;overflow-x:auto}
+.year-bar::-webkit-scrollbar{display:none}
+.ypill{padding:4px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.25);background:transparent;color:#d8f3dc;white-space:nowrap;flex-shrink:0;font-weight:500}
+.ypill.active{background:#fff;color:var(--g-dark)}
+.hbanner{background:var(--g-dark);padding:6px 12px;display:flex;gap:6px;overflow-x:auto;border-top:1px solid rgba(255,255,255,.1)}
 .hbanner::-webkit-scrollbar{display:none}
 .hpill{background:rgba(255,255,255,.12);border-radius:20px;padding:4px 10px;white-space:nowrap;font-size:11px;color:#d8f3dc;flex-shrink:0}
 .hpill strong{color:#fff}
@@ -34,10 +37,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .vtabs::-webkit-scrollbar{display:none}
 .vtab{padding:10px 14px;white-space:nowrap;font-size:12px;color:var(--tx2);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;flex-shrink:0;font-weight:500}
 .vtab.active{color:var(--g-mid);border-bottom-color:var(--g-mid)}
-.stabs{background:var(--sur2);padding:7px 11px;display:flex;gap:5px;overflow-x:auto}
+.vtab.ended{color:var(--tx3);text-decoration:line-through}
+/* SEEDLING TABS */
+.stabs{background:var(--sur2);padding:7px 11px;display:flex;gap:5px;overflow-x:auto;align-items:center}
 .stabs::-webkit-scrollbar{display:none}
-.schip{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--bd);background:var(--sur);color:var(--tx2);white-space:nowrap;flex-shrink:0;font-weight:500}
+.schip{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--bd);background:var(--sur);color:var(--tx2);white-space:nowrap;flex-shrink:0;font-weight:500;display:flex;align-items:center;gap:4px}
 .schip.active{background:var(--g-mid);color:#fff;border-color:var(--g-mid)}
+.schip.ended{color:var(--tx3);border-style:dashed;background:var(--sur2)}
+.schip.ended.active{background:var(--tx3);color:#fff;border-color:var(--tx3)}
+.ended-badge{font-size:9px;background:var(--tx3);color:#fff;padding:1px 4px;border-radius:4px}
+.schip.active .ended-badge{background:rgba(255,255,255,.35);color:#fff}
 .vtoggle{background:var(--sur);border-bottom:1px solid var(--bd);display:flex;padding:7px 11px;gap:6px}
 .vtbtn{flex:1;padding:7px 0;border-radius:var(--rs);font-size:11px;cursor:pointer;border:1px solid var(--bd);background:transparent;color:var(--tx2);display:flex;align-items:center;justify-content:center;gap:4px;font-weight:500}
 .vtbtn.active{background:var(--g-mid);color:#fff;border-color:var(--g-mid)}
@@ -74,6 +83,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .empty{text-align:center;padding:20px 0;color:var(--tx3);font-size:12px;line-height:2}
 .addlogbtn{width:100%;padding:12px;background:var(--g-mid);color:#fff;border:none;border-radius:var(--r);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;margin-top:10px;font-weight:600}
 .addlogbtn:active{background:var(--g-dark)}
+.ended-notice{background:#fff3cd;border:1px solid #ffc107;border-radius:var(--rs);padding:8px 12px;margin-bottom:10px;font-size:12px;color:#856404;display:flex;align-items:center;gap:8px}
 .filterbar{background:var(--sur2);padding:7px 11px;display:flex;gap:5px;overflow-x:auto}
 .filterbar::-webkit-scrollbar{display:none}
 .fbtn{padding:4px 10px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid var(--bd);background:var(--sur);color:var(--tx2);white-space:nowrap;flex-shrink:0;font-weight:500}
@@ -91,6 +101,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .tl-meta{font-size:11px;color:var(--tx2);margin-top:2px}
 .tl-note{font-size:11px;color:var(--tx2);margin-top:4px;font-style:italic;word-break:break-all}
 .tl-photo{width:56px;height:56px;object-fit:cover;border-radius:6px;margin-top:5px;border:1px solid var(--bd)}
+/* MODALS */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center}
 .modal-bg.open{display:flex}
 .sheet{background:var(--sur);border-radius:20px 20px 0 0;padding:18px 18px calc(env(safe-area-inset-bottom,0px)+20px);width:100%;max-width:430px;max-height:88vh;overflow-y:auto}
@@ -110,12 +121,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .fg input[type=number]{width:50%}
 .fg select{margin-top:5px}
 .fg textarea{height:65px;resize:none;font-family:inherit}
-.fg input[type=file]{padding:5px 8px;font-size:12px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--sur2)}
+.fg input[type=file]{padding:5px 8px;font-size:12px}
 .ppreview{max-width:100%;border-radius:var(--rs);margin-top:5px;border:1px solid var(--bd);display:none}
 .sbtns{display:flex;gap:7px;margin-top:13px}
 .sbtns button{flex:1;padding:11px;border-radius:var(--rs);font-size:13px;cursor:pointer;font-weight:600}
 .bcx{background:transparent;border:1px solid var(--bd);color:var(--tx2)}
 .bsv{background:var(--g-mid);color:#fff;border:none}
+.bred{background:#dc3545;color:#fff;border:none}
+/* DETAIL */
 .det-vp{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center;padding:16px}
 .det-vp.open{display:flex}
 .det-sheet{background:var(--sur);border-radius:16px;padding:18px;width:100%;max-width:400px;max-height:80vh;overflow-y:auto}
@@ -127,6 +140,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .dlbl{color:var(--tx2);min-width:54px;flex-shrink:0;font-weight:500}
 .dval{color:var(--tx);flex:1;word-break:break-all}
 .dphoto{max-width:100%;border-radius:var(--rs);margin-top:8px;border:1px solid var(--bd)}
+/* SEEDLING MANAGER */
+.smgr-item{background:var(--sur2);border:1px solid var(--bd);border-radius:var(--rs);padding:11px 12px;margin-bottom:8px}
+.smgr-row{display:flex;align-items:center;gap:8px}
+.smgr-name{flex:1;font-size:13px;font-weight:500;color:var(--tx)}
+.smgr-ended{font-size:10px;background:var(--tx3);color:#fff;padding:2px 6px;border-radius:4px}
+.smgr-btns{display:flex;gap:5px}
+.smgr-btn{padding:4px 9px;border-radius:var(--rs);font-size:11px;border:1px solid var(--bd);background:var(--sur);cursor:pointer;color:var(--tx2);font-weight:500}
+.smgr-btn.red{border-color:#dc3545;color:#dc3545}
+.smgr-btn.green{border-color:var(--g-mid);color:var(--g-mid)}
 .toast{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px)+20px);left:50%;transform:translateX(-50%) translateY(60px);background:var(--g-dark);color:#fff;padding:9px 18px;border-radius:24px;font-size:12px;font-weight:500;z-index:400;transition:.25s;opacity:0;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
@@ -143,15 +165,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       </div>
     </div>
   </div>
+  <div class="year-bar" id="yearbar"></div>
   <div class="hbanner" id="hbanner"></div>
   <div class="vtabs" id="vtabs"></div>
   <div class="stabs" id="stabs"></div>
   <div class="vtoggle">
     <button class="vtbtn active" id="vt-cal" onclick="setView('cal')">📅 カレンダー</button>
-    <button class="vtbtn" id="vt-fert" onclick="setView('fert')">🌿 追肥ビュー</button>
-    <button class="vtbtn" id="vt-trouble" onclick="setView('trouble')">⚠️ トラブルビュー</button>
+    <button class="vtbtn" id="vt-fert" onclick="setView('fert')">🌿 追肥</button>
+    <button class="vtbtn" id="vt-trouble" onclick="setView('trouble')">⚠️ トラブル</button>
   </div>
-
   <div id="view-cal">
     <div class="calwrap">
       <div class="dnames"><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span style="color:var(--blue)">土</span><span style="color:var(--red)">日</span></div>
@@ -167,7 +189,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
     <div class="daylog" id="daylog"></div>
   </div>
-
   <div id="view-tl" style="display:none">
     <div class="filterbar" id="filterbar"></div>
     <div class="timeline" id="timeline"></div>
@@ -196,7 +217,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
     <div id="fnrow" class="fg" style="display:none">
       <label>肥料の種類・メモ</label>
-      <textarea id="fertnote" placeholder="例：ハイポネックス液肥1000倍 / 鶏糞ペレット / 骨粉など"></textarea>
+      <textarea id="fertnote" placeholder="例：ハイポネックス液肥1000倍 / 鶏糞ペレット"></textarea>
     </div>
     <div class="fg">
       <label>天気</label>
@@ -222,6 +243,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+<!-- 苗管理シート -->
+<div class="modal-bg" id="smgr-overlay" onclick="bgClick(event,'smgr-overlay')">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>🌱 苗を管理する</h3>
+    <div id="smgr-list"></div>
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)">
+      <div class="fg"><label>新しい苗の名前</label><input type="text" id="new-s-name" placeholder="例：ミニトマト千果・大玉桃太郎"></div>
+      <div class="sbtns">
+        <button class="bcx" onclick="closeSMgr()">閉じる</button>
+        <button class="bsv" onclick="addSeedling()">追加する</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- 詳細モーダル -->
 <div class="det-vp" id="det-overlay" onclick="bgClick(event,'det-overlay')">
   <div class="det-sheet" id="det-sheet"></div>
@@ -242,53 +279,109 @@ const ACT={
 function ld(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
 function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
-let vegs=ld('gv2_vegs',[
-  {id:'tomato',label:'🍅 トマト',seedlings:['第1苗','第2苗']},
-  {id:'cucumber',label:'🥒 キュウリ',seedlings:['プランターA']},
-  {id:'eggplant',label:'🍆 ナス',seedlings:['畑1番']},
-  {id:'basil',label:'🌿 バジル',seedlings:['キッチン']},
+let vegs=ld('gv3_vegs',[
+  {id:'tomato',label:'🍅 トマト',seedlings:[
+    {id:'s1',name:'第1苗',ended:false},
+    {id:'s2',name:'第2苗',ended:false}
+  ]},
+  {id:'cucumber',label:'🥒 キュウリ',seedlings:[{id:'s3',name:'プランターA',ended:false}]},
+  {id:'eggplant',label:'🍆 ナス',seedlings:[{id:'s4',name:'畑1番',ended:false}]},
+  {id:'basil',label:'🌿 バジル',seedlings:[{id:'s5',name:'キッチン',ended:false}]},
 ]);
-let logs=ld('gv2_logs',{});
+let logs=ld('gv3_logs',{});
 
-let curY=new Date().getFullYear(),curM=new Date().getMonth();
+const thisYear=new Date().getFullYear();
+let curY=thisYear,curM=new Date().getMonth();
 let curVeg=0,curS=0,curDay=null,curAct=null,curWx=null,curPhoto=null;
 let curView='cal',curFilter='all';
+let showEnded=false;
 
-function lk(vid,si,y,m,d){return `${vid}|${si}|${y}-${m}-${d}`;}
-function getE(vid,si,d){return logs[lk(vid,si,curY,curM,d)]||[];}
-function curE(d){return getE(vegs[curVeg].id,curS,d);}
+function lk(vid,sid,y,m,d){return `${vid}|${sid}|${y}-${m}-${d}`;}
+function getSeedlings(veg,inclEnded){
+  const s=veg.seedlings||[];
+  if(inclEnded)return s;
+  const active=s.filter(x=>!x.ended);
+  return active.length>0?active:s;// always show at least one
+}
+function curSeedling(){return (vegs[curVeg].seedlings||[])[curS]||null;}
+function curSid(){const s=curSeedling();return s?s.id:null;}
+function getE(vid,sid,y,m,d){return logs[lk(vid,sid,y,m,d)]||[];}
+function curE(d){const s=curSeedling();if(!s)return[];return getE(vegs[curVeg].id,s.id,d);}
 
+/* YEAR BAR */
+function getAvailableYears(){
+  const years=new Set([thisYear]);
+  Object.keys(logs).forEach(k=>{
+    const m=k.match(/\|(\d{4})-/);
+    if(m)years.add(Number(m[1]));
+  });
+  return [...years].sort((a,b)=>b-a);
+}
+function renderYearBar(){
+  const years=getAvailableYears();
+  document.getElementById('yearbar').innerHTML=years.map(y=>
+    `<button class="ypill${curY===y?' active':''}" onclick="selYear(${y})">${y}年</button>`
+  ).join('');
+}
+function selYear(y){curY=y;curDay=null;renderAll();}
+
+/* HARVEST BANNER */
 function htotals(){
   const veg=vegs[curVeg];const res={};
-  veg.seedlings.forEach((s,si)=>{
+  (veg.seedlings||[]).forEach(s=>{
     let tot=0,unit='個';
     for(let d=1;d<=31;d++){
-      (logs[lk(veg.id,si,curY,curM,d)]||[]).forEach(l=>{if(l.act==='harvest'&&l.qty){tot+=Number(l.qty);if(l.unit)unit=l.unit;}});
+      (logs[lk(veg.id,s.id,curY,curM,d)]||[]).forEach(l=>{
+        if(l.act==='harvest'&&l.qty){tot+=Number(l.qty);if(l.unit)unit=l.unit;}
+      });
     }
-    if(tot>0)res[s]={tot,unit};
+    if(tot>0)res[s.name]={tot,unit};
   });
   return res;
 }
-
 function renderBanner(){
   const t=htotals();const veg=vegs[curVeg];
-  document.getElementById('hbanner').innerHTML=veg.seedlings.map(s=>{
-    const v=t[s];
-    return `<div class="hpill">${s}：収穫 <strong>${v?v.tot+v.unit:'0個'}</strong></div>`;
-  }).join('');
+  document.getElementById('hbanner').innerHTML=(veg.seedlings||[]).map(s=>{
+    const v=t[s.name];
+    return `<div class="hpill">${s.name}${s.ended?'（終了）':''}：収穫 <strong>${v?v.tot+v.unit:'0個'}</strong></div>`;
+  }).join('')||'<div class="hpill" style="opacity:.5">記録なし</div>';
 }
 
+/* VEG TABS */
 function renderVTabs(){
-  document.getElementById('vtabs').innerHTML=vegs.map((v,i)=>`<button class="vtab${i===curVeg?' active':''}" onclick="selVeg(${i})">${v.label}</button>`).join('')
-    +`<button style="padding:10px 12px;white-space:nowrap;font-size:12px;color:var(--tx3);cursor:pointer;border:none;background:none;flex-shrink:0" onclick="openVegMgr()">＋ 管理</button>`;
+  document.getElementById('vtabs').innerHTML=vegs.map((v,i)=>{
+    const allEnded=(v.seedlings||[]).every(s=>s.ended);
+    return `<button class="vtab${i===curVeg?' active':''}${allEnded?' ended':''}" onclick="selVeg(${i})">${v.label}</button>`;
+  }).join('')+`<button style="padding:10px 12px;white-space:nowrap;font-size:12px;color:var(--tx3);cursor:pointer;border:none;background:none;flex-shrink:0" onclick="openVegMgr()">＋ 野菜追加</button>`;
 }
 
+/* SEEDLING TABS */
 function renderSTabs(){
   const veg=vegs[curVeg];
-  document.getElementById('stabs').innerHTML=veg.seedlings.map((s,i)=>`<button class="schip${i===curS?' active':''}" onclick="selS(${i})">${s}</button>`).join('')
-    +`<button style="padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px dashed var(--bd);background:none;color:var(--tx3);white-space:nowrap;flex-shrink:0" onclick="addSeedlingPrompt()">＋ 苗追加</button>`;
+  const seeds=veg.seedlings||[];
+  const active=seeds.filter(s=>!s.ended);
+  const ended=seeds.filter(s=>s.ended);
+  let html=active.map((s,i)=>{
+    const realIdx=seeds.indexOf(s);
+    return `<button class="schip${realIdx===curS?' active':''}" onclick="selS(${realIdx})">${s.name}</button>`;
+  }).join('');
+  if(ended.length>0){
+    if(showEnded){
+      html+=ended.map(s=>{
+        const realIdx=seeds.indexOf(s);
+        return `<button class="schip ended${realIdx===curS?' active':''}" onclick="selS(${realIdx})">${s.name}<span class="ended-badge">終了</span></button>`;
+      }).join('');
+      html+=`<button style="padding:5px 10px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid var(--tx3);background:none;color:var(--tx3);white-space:nowrap;flex-shrink:0" onclick="toggleEnded()">▲ 隠す</button>`;
+    } else {
+      html+=`<button style="padding:5px 10px;border-radius:20px;font-size:11px;cursor:pointer;border:1px dashed var(--tx3);background:none;color:var(--tx3);white-space:nowrap;flex-shrink:0" onclick="toggleEnded()">終了済 ${ended.length}件 ▼</button>`;
+    }
+  }
+  html+=`<button style="padding:5px 10px;border-radius:20px;font-size:11px;cursor:pointer;border:1px dashed var(--bd);background:none;color:var(--tx3);white-space:nowrap;flex-shrink:0" onclick="openSMgr()">⚙️ 苗管理</button>`;
+  document.getElementById('stabs').innerHTML=html;
 }
+function toggleEnded(){showEnded=!showEnded;renderSTabs();}
 
+/* CALENDAR */
 function renderCal(){
   document.getElementById('mlabel').textContent=`${curY}年${curM+1}月`;
   const grid=document.getElementById('calgrid');grid.innerHTML='';
@@ -296,6 +389,7 @@ function renderCal(){
   const off=(first===0)?6:first-1;
   const days=new Date(curY,curM+1,0).getDate();
   const today=new Date();
+  const sid=curSid();
   for(let i=0;i<off;i++){
     const c=document.createElement('div');c.className='ccell om';
     c.innerHTML=`<div class="dnum">${new Date(curY,curM,1-off+i).getDate()}</div>`;
@@ -305,11 +399,13 @@ function renderCal(){
     const c=document.createElement('div');
     const isTod=(today.getFullYear()===curY&&today.getMonth()===curM&&today.getDate()===d);
     c.className='ccell'+(isTod?' today':'')+(curDay===d?' sel':'');
-    const ents=curE(d);
+    const ents=sid?getE(vegs[curVeg].id,sid,curY,curM,d):[];
     const acts=[...new Set(ents.map(e=>e.act))];
     let htot=0;
-    vegs[curVeg].seedlings.forEach((_,si)=>{
-      (logs[lk(vegs[curVeg].id,si,curY,curM,d)]||[]).forEach(l=>{if(l.act==='harvest'&&l.qty)htot+=Number(l.qty);});
+    (vegs[curVeg].seedlings||[]).forEach(s=>{
+      (logs[lk(vegs[curVeg].id,s.id,curY,curM,d)]||[]).forEach(l=>{
+        if(l.act==='harvest'&&l.qty)htot+=Number(l.qty);
+      });
     });
     const wx=ents.length>0&&ents[0].wx?WX_ICON[ents[0].wx]||'':'';
     c.innerHTML=`<div class="dnum">${d}</div><div class="drow">${acts.map(a=>`<div class="dot ${ACT[a].dot}"></div>`).join('')}</div>${htot>0?`<div class="hnum">${htot}</div>`:''}${wx?`<div class="wxc">${wx}</div>`:''}`;
@@ -318,12 +414,16 @@ function renderCal(){
   }
 }
 
+/* DAY LOG */
 function renderDayLog(){
   const el=document.getElementById('daylog');
+  const s=curSeedling();
   if(!curDay){el.innerHTML='<div class="empty">📅<br>日付をタップして<br>記録を確認・追加</div>';return;}
   const ents=curE(curDay);
-  const s=vegs[curVeg].seedlings[curS];
-  let h=`<div class="dl-title"><span>${curM+1}月${curDay}日 — ${s}</span><button class="add-sm" onclick="openSheet()">＋ 追加</button></div>`;
+  const isEnded=s&&s.ended;
+  let h='';
+  if(isEnded)h+=`<div class="ended-notice">⚠️ この苗は栽培終了済みです。記録の閲覧のみできます。</div>`;
+  h+=`<div class="dl-title"><span>${curM+1}月${curDay}日 — ${s?s.name:''}</span>${!isEnded?`<button class="add-sm" onclick="openSheet()">＋ 追加</button>`:''}</div>`;
   if(!ents.length){h+='<div class="empty" style="padding:10px 0">記録なし</div>';}
   else ents.forEach((e,ei)=>{
     const m=ACT[e.act];
@@ -333,32 +433,32 @@ function renderDayLog(){
       <div class="licon" style="background:${m.bg}">${m.em}</div>
       <div class="lbody">
         <div class="ltype">${m.label}${q}${wx}</div>
-        <div class="lmeta">${s}</div>
+        <div class="lmeta">${s?s.name:''}</div>
         ${e.fertnote?`<div class="lnote">🌿 ${e.fertnote}</div>`:''}
         ${e.memo?`<div class="lnote">📝 ${e.memo}</div>`:''}
         ${e.photo?`<img src="${e.photo}" class="lphoto" alt="写真">`:''}
       </div>
-      <button class="delbtn" onclick="event.stopPropagation();delLog(${ei})" aria-label="削除">🗑</button>
+      ${!isEnded?`<button class="delbtn" onclick="event.stopPropagation();delLog(${ei})" aria-label="削除">🗑</button>`:''}
     </div>`;
   });
-  h+=`<button class="addlogbtn" onclick="openSheet()">＋ 作業を記録する</button>`;
+  if(!isEnded)h+=`<button class="addlogbtn" onclick="openSheet()">＋ 作業を記録する</button>`;
   el.innerHTML=h;
 }
 
+/* DETAIL */
 function showDet(ei){
   const e=curE(curDay)[ei];if(!e)return;
-  const m=ACT[e.act];const s=vegs[curVeg].seedlings[curS];
+  const m=ACT[e.act];const s=curSeedling();
   const q=e.act==='harvest'&&e.qty?`${e.qty}${e.unit||'個'}`:'-';
   document.getElementById('det-sheet').innerHTML=`
     <div class="det-hdr">
-      <div>
-        <div class="dicon" style="background:${m.bg}">${m.em}</div>
-        <div style="font-size:15px;font-weight:600;color:var(--tx)">${m.label}</div>
-      </div>
+      <div><div class="dicon" style="background:${m.bg}">${m.em}</div>
+      <div style="font-size:15px;font-weight:600;color:var(--tx)">${m.label}</div></div>
       <button class="closebtn" onclick="closeDet()">✕</button>
     </div>
     <div class="drow"><span class="dlbl">日付</span><span class="dval">${curY}年${curM+1}月${curDay}日</span></div>
-    <div class="drow"><span class="dlbl">苗</span><span class="dval">${vegs[curVeg].label} / ${s}</span></div>
+    <div class="drow"><span class="dlbl">野菜</span><span class="dval">${vegs[curVeg].label}</span></div>
+    <div class="drow"><span class="dlbl">苗</span><span class="dval">${s?s.name:''}</span></div>
     <div class="drow"><span class="dlbl">天気</span><span class="dval">${e.wx?WX_ICON[e.wx]+' '+WX_LABEL[e.wx]:'—'}</span></div>
     ${e.act==='harvest'?`<div class="drow"><span class="dlbl">収穫量</span><span class="dval">${q}</span></div>`:''}
     ${e.act==='fert'?`<div class="drow"><span class="dlbl">肥料</span><span class="dval">${e.fertnote||'—'}</span></div>`:''}
@@ -368,8 +468,9 @@ function showDet(ei){
 }
 function closeDet(){document.getElementById('det-overlay').classList.remove('open');}
 
+/* TIMELINE */
 function renderTL(){
-  const veg=vegs[curVeg];const s=veg.seedlings[curS];
+  const s=curSeedling();
   const fa=curFilter==='all'?null:curFilter;
   const all=[];
   for(let d=1;d<=31;d++){
@@ -384,19 +485,79 @@ function renderTL(){
   document.getElementById('timeline').innerHTML=all.map(({d,e,ei},idx)=>{
     const m=ACT[e.act];const isLast=idx===all.length-1;
     const q=e.act==='harvest'&&e.qty?` — ${e.qty}${e.unit||'個'}` :'';
-    const wx=e.wx?` ${WX_ICON[e.wx]||''}` :'';
     return `<div class="tl-row" onclick="selDay(${d});setView('cal');setTimeout(()=>showDet(${ei}),50)">
       <div class="tl-date"><div class="td">${curM+1}/${d}</div><div class="tm">${e.wx?WX_ICON[e.wx]||'':''}</div></div>
       <div class="tl-line"><div class="tl-dot" style="background:${m.dc}"></div>${!isLast?'<div class="tl-bar"></div>':''}</div>
       <div class="tl-body">
-        <div class="tl-type">${m.em} ${m.label}${q}${wx}</div>
-        <div class="tl-meta">${s}</div>
+        <div class="tl-type">${m.em} ${m.label}${q}</div>
+        <div class="tl-meta">${s?s.name:''}</div>
         ${e.act==='fert'&&e.fertnote?`<div class="tl-note">🌿 ${e.fertnote}</div>`:''}
         ${e.memo?`<div class="tl-note">📝 ${e.memo}</div>`:''}
         ${e.photo?`<img src="${e.photo}" class="tl-photo" alt="写真">`:''}
       </div>
     </div>`;
   }).join('');
+}
+
+/* SEEDLING MANAGER */
+function openSMgr(){
+  renderSMgrList();
+  document.getElementById('new-s-name').value='';
+  document.getElementById('smgr-overlay').classList.add('open');
+}
+function closeSMgr(){document.getElementById('smgr-overlay').classList.remove('open');}
+function renderSMgrList(){
+  const veg=vegs[curVeg];
+  document.getElementById('smgr-list').innerHTML=(veg.seedlings||[]).map((s,i)=>`
+    <div class="smgr-item">
+      <div class="smgr-row">
+        <span class="smgr-name">${s.name}${s.ended?'<span class="smgr-ended">栽培終了</span>':''}</span>
+        <div class="smgr-btns">
+          <button class="smgr-btn" onclick="renameSeedling(${i})">名前変更</button>
+          <button class="smgr-btn ${s.ended?'green':'red'}" onclick="toggleSeedlingEnd(${i})">${s.ended?'再開':'終了'}</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+function addSeedling(){
+  const name=document.getElementById('new-s-name').value.trim();
+  if(!name){showToast('苗の名前を入力してください');return;}
+  const id='s'+Date.now();
+  vegs[curVeg].seedlings.push({id,name,ended:false});
+  sv('gv3_vegs',vegs);
+  renderSMgrList();
+  document.getElementById('new-s-name').value='';
+  renderAll();showToast(`「${name}」を追加しました`);
+}
+function renameSeedling(i){
+  const s=vegs[curVeg].seedlings[i];
+  const newName=prompt(`「${s.name}」の新しい名前を入力`,s.name);
+  if(!newName||!newName.trim())return;
+  s.name=newName.trim();
+  sv('gv3_vegs',vegs);
+  renderSMgrList();renderAll();showToast('名前を変更しました');
+}
+function toggleSeedlingEnd(i){
+  const s=vegs[curVeg].seedlings[i];
+  s.ended=!s.ended;
+  sv('gv3_vegs',vegs);
+  renderSMgrList();
+  if(curS===i&&s.ended){
+    // 終了した苗を選んでいた場合、アクティブな苗に切り替え
+    const active=vegs[curVeg].seedlings.findIndex(x=>!x.ended);
+    if(active>=0)curS=active;
+  }
+  renderAll();showToast(s.ended?`「${s.name}」を栽培終了にしました`:`「${s.name}」を再開しました`);
+}
+
+/* VEG MANAGER */
+function openVegMgr(){
+  const name=prompt('新しい野菜の名前（例：🍅 ミニトマト）');
+  if(!name||!name.trim())return;
+  const seedling=prompt('最初の苗の名前（例：第1苗・品種名）')||'第1苗';
+  vegs.push({id:'veg_'+Date.now(),label:name.trim(),seedlings:[{id:'s'+Date.now(),name:seedling.trim(),ended:false}]});
+  sv('gv3_vegs',vegs);renderAll();showToast(`${name}を追加しました`);
 }
 
 function setView(v){
@@ -415,7 +576,9 @@ function setView(v){
 function setFilter(f){curFilter=f;renderTL();}
 
 function openSheet(){
+  const s=curSeedling();
   if(!curDay){showToast('日付を先に選んでください');return;}
+  if(s&&s.ended){showToast('栽培終了の苗には記録できません');return;}
   curAct=null;curWx=null;curPhoto=null;
   ['ab-water','ab-fert','ab-prune','ab-pinch','ab-harvest','ab-trouble'].forEach(id=>document.getElementById(id).classList.remove('sel'));
   ['wx-sunny','wx-rain','wx-drizzle'].forEach(id=>document.getElementById(id).classList.remove('sel'));
@@ -427,11 +590,17 @@ function openSheet(){
   document.getElementById('fnrow').style.display='none';
   document.getElementById('photoinput').value='';
   document.getElementById('ppreview').style.display='none';
-  document.getElementById('sheettitle').textContent=`${curM+1}月${curDay}日 — ${vegs[curVeg].seedlings[curS]}`;
+  document.getElementById('sheettitle').textContent=`${curM+1}月${curDay}日 — ${s?s.name:''}`;
   document.getElementById('overlay').classList.add('open');
 }
 function closeSheet(){document.getElementById('overlay').classList.remove('open');}
-function bgClick(e,id){if(e.target===document.getElementById(id)){if(id==='overlay')closeSheet();else closeDet();}}
+function bgClick(e,id){
+  if(e.target===document.getElementById(id)){
+    if(id==='overlay')closeSheet();
+    else if(id==='smgr-overlay')closeSMgr();
+    else closeDet();
+  }
+}
 function selAct(a){
   curAct=a;
   ['ab-water','ab-fert','ab-prune','ab-pinch','ab-harvest','ab-trouble'].forEach(id=>document.getElementById(id).classList.remove('sel'));
@@ -452,46 +621,35 @@ function prevPhoto(inp){
 }
 function saveLog(){
   if(!curAct){showToast('作業の種類を選んでください');return;}
-  const k=lk(vegs[curVeg].id,curS,curY,curM,curDay);
+  const s=curSeedling();if(!s)return;
+  const k=lk(vegs[curVeg].id,s.id,curY,curM,curDay);
   if(!logs[k])logs[k]=[];
-  const qty=curAct==='harvest'?Number(document.getElementById('hqty').value)||1:null;
   logs[k].push({
     act:curAct,wx:curWx,
     memo:document.getElementById('memoinput').value.trim(),
-    photo:curPhoto,qty,
+    photo:curPhoto,
+    qty:curAct==='harvest'?Number(document.getElementById('hqty').value)||1:null,
     unit:document.getElementById('hunit').value,
     fertnote:curAct==='fert'?document.getElementById('fertnote').value.trim():'',
   });
-  sv('gv2_logs',logs);
+  sv('gv3_logs',logs);
   closeSheet();renderAll();
   showToast(`${ACT[curAct].label}を記録しました`);
 }
 function delLog(ei){
-  const k=lk(vegs[curVeg].id,curS,curY,curM,curDay);
+  const s=curSeedling();if(!s)return;
+  const k=lk(vegs[curVeg].id,s.id,curY,curM,curDay);
   if(logs[k])logs[k].splice(ei,1);
-  sv('gv2_logs',logs);renderAll();showToast('削除しました');
+  sv('gv3_logs',logs);renderAll();showToast('削除しました');
 }
-function selVeg(i){curVeg=i;curS=0;curDay=null;renderAll();}
+function selVeg(i){curVeg=i;curS=0;curDay=null;showEnded=false;renderAll();}
 function selS(i){curS=i;renderAll();}
 function selDay(d){curDay=d;if(curView==='cal'){renderCal();renderDayLog();}}
 function chMonth(dir){
   curM+=dir;if(curM>11){curM=0;curY++;}if(curM<0){curM=11;curY--;}
   curDay=null;renderAll();
 }
-function openVegMgr(){
-  const name=prompt('新しい野菜の名前（例：🍅 ミニトマト）');
-  if(!name||!name.trim())return;
-  const seedling=prompt('最初の苗の名前（例：第1苗）')||'第1苗';
-  vegs.push({id:'veg_'+Date.now(),label:name.trim(),seedlings:[seedling.trim()]});
-  sv('gv2_vegs',vegs);renderAll();showToast(`${name}を追加しました`);
-}
-function addSeedlingPrompt(){
-  const name=prompt(`「${vegs[curVeg].label}」に苗を追加\n苗の名前を入力`);
-  if(!name||!name.trim())return;
-  vegs[curVeg].seedlings.push(name.trim());
-  sv('gv2_vegs',vegs);renderAll();showToast(`${name}を追加しました`);
-}
-function renderAll(){renderBanner();renderVTabs();renderSTabs();renderCal();renderDayLog();if(curView!=='cal')renderTL();}
+function renderAll(){renderYearBar();renderBanner();renderVTabs();renderSTabs();renderCal();renderDayLog();if(curView!=='cal')renderTL();}
 function showToast(msg){
   const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2200);
