@@ -659,3 +659,72 @@ renderAll();
 </script>
 </body>
 </html>
+<script>
+// ===== エクスポート・インポート機能 =====
+
+function exportData() {
+  const data = {
+    version: 1,
+    exportDate: new Date().toISOString(),
+    vegs: JSON.parse(localStorage.getItem('gv3_vegs') || '[]'),
+    logs: JSON.parse(localStorage.getItem('gv3_logs') || '{}'),
+  };
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const date = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `菜園バックアップ_${date}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('バックアップファイルを保存しました');
+}
+
+function importData() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (!data.vegs || !data.logs) {
+          showToast('ファイルの形式が正しくありません');
+          return;
+        }
+        if (!confirm('現在のデータをバックアップのデータで上書きします。よろしいですか？')) return;
+        localStorage.setItem('gv3_vegs', JSON.stringify(data.vegs));
+        localStorage.setItem('gv3_logs', JSON.stringify(data.logs));
+        vegs = data.vegs;
+        logs = data.logs;
+        curVeg = 0; curS = 0; curDay = null;
+        renderAll();
+        showToast('データを復元しました！');
+      } catch(err) {
+        showToast('ファイルの読み込みに失敗しました');
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// バックアップボタンをアプリ下部に追加
+window.addEventListener('load', () => {
+  const bar = document.createElement('div');
+  bar.style.cssText = 'background:var(--sur);border-top:1px solid var(--bd);padding:12px;display:flex;gap:8px;position:sticky;bottom:0;max-width:430px;margin:0 auto;';
+  bar.innerHTML = `
+    <button onclick="exportData()" style="flex:1;padding:10px;border-radius:var(--rs);border:1px solid var(--g-mid);background:var(--g-pale);color:var(--g-dark);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px">
+      📥 バックアップ保存
+    </button>
+    <button onclick="importData()" style="flex:1;padding:10px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sur2);color:var(--tx2);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px">
+      📤 データ復元
+    </button>
+  `;
+  document.querySelector('.app').appendChild(bar);
+});
+</script>
