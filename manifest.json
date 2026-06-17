@@ -1,0 +1,25 @@
+{
+  "name": "マイ菜園カレンダー",
+  "short_name": "菜園",
+  "description": "家庭菜園の記録・管理アプリ",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#2D6A4F",
+  "theme_color": "#2D6A4F",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

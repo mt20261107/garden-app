@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>マイ菜園カレンダー</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --g-dark:#1B4332;--g-mid:#2D6A4F;--g-light:#52b788;--g-pale:#d8f3dc;
+  --bg:#f8f9fa;--sur:#ffffff;--sur2:#f1f3f5;--bd:#dee2e6;
+  --tx:#212529;--tx2:#6c757d;--tx3:#adb5bd;
+  --r:10px;--rs:6px;
+  --blue:#378ADD;--amber:#BA7517;--purple:#7F77DD;--coral:#D85A30;--red:#E24B4A;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+.app{max-width:430px;margin:0 auto;background:var(--bg);min-height:100vh}
+.hdr{background:var(--g-mid);padding:env(safe-area-inset-top,12px) 15px 12px;color:#fff}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.hdr h1{font-size:17px;font-weight:600;display:flex;align-items:center;gap:7px}
+.mnav{display:flex;align-items:center;gap:5px}
+.mnav button{background:rgba(255,255,255,.18);border:none;color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
+.mnav span{font-size:14px;font-weight:500;min-width:72px;text-align:center}
+.hbanner{background:var(--g-dark);padding:7px 12px;display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.hbanner::-webkit-scrollbar{display:none}
+.hpill{background:rgba(255,255,255,.12);border-radius:20px;padding:4px 10px;white-space:nowrap;font-size:11px;color:#d8f3dc;flex-shrink:0}
+.hpill strong{color:#fff}
+.vtabs{background:var(--sur);border-bottom:1px solid var(--bd);display:flex;overflow-x:auto}
+.vtabs::-webkit-scrollbar{display:none}
+.vtab{padding:10px 14px;white-space:nowrap;font-size:12px;color:var(--tx2);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;flex-shrink:0;font-weight:500}
+.vtab.active{color:var(--g-mid);border-bottom-color:var(--g-mid)}
+.stabs{background:var(--sur2);padding:7px 11px;display:flex;gap:5px;overflow-x:auto}
+.stabs::-webkit-scrollbar{display:none}
+.schip{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--bd);background:var(--sur);color:var(--tx2);white-space:nowrap;flex-shrink:0;font-weight:500}
+.schip.active{background:var(--g-mid);color:#fff;border-color:var(--g-mid)}
+.vtoggle{background:var(--sur);border-bottom:1px solid var(--bd);display:flex;padding:7px 11px;gap:6px}
+.vtbtn{flex:1;padding:7px 0;border-radius:var(--rs);font-size:11px;cursor:pointer;border:1px solid var(--bd);background:transparent;color:var(--tx2);display:flex;align-items:center;justify-content:center;gap:4px;font-weight:500}
+.vtbtn.active{background:var(--g-mid);color:#fff;border-color:var(--g-mid)}
+.calwrap{background:var(--sur);padding:10px 11px}
+.dnames{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:4px}
+.dnames span{font-size:10px;color:var(--tx3)}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.ccell{min-height:48px;border-radius:6px;padding:3px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.ccell:active{background:var(--sur2)}
+.ccell.sel{background:var(--g-pale)}
+.ccell.today .dnum{background:var(--g-mid);color:#fff;border-radius:50%}
+.ccell.om .dnum{color:var(--tx3)}
+.dnum{font-size:12px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;color:var(--tx)}
+.drow{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;margin-top:1px;max-width:30px}
+.dot{width:5px;height:5px;border-radius:50%}
+.dw{background:var(--blue)}.df{background:var(--amber)}.dp{background:#639922}
+.di{background:var(--purple)}.dh{background:var(--coral)}.dt{background:var(--red)}
+.hnum{font-size:9px;color:var(--coral);font-weight:600;line-height:1;margin-top:1px}
+.wxc{font-size:10px;margin-top:1px}
+.legend{display:flex;flex-wrap:wrap;gap:5px;padding:7px 11px;background:var(--sur);border-top:1px solid var(--bd)}
+.li{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--tx2)}
+.daylog{background:var(--sur);border-top:3px solid var(--bg);padding:13px}
+.dl-title{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:9px;display:flex;justify-content:space-between;align-items:center}
+.add-sm{font-size:11px;padding:4px 9px;border-radius:7px;border:1px solid var(--bd);background:var(--sur2);cursor:pointer;color:var(--tx2)}
+.lentry{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid var(--bd);cursor:pointer}
+.lentry:last-of-type{border-bottom:none}
+.licon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.lbody{flex:1;min-width:0}
+.ltype{font-size:12px;font-weight:600;color:var(--tx)}
+.lmeta{font-size:11px;color:var(--tx2);margin-top:1px}
+.lnote{font-size:11px;color:var(--tx2);margin-top:3px;font-style:italic;word-break:break-all}
+.lphoto{width:52px;height:52px;object-fit:cover;border-radius:6px;margin-top:4px;border:1px solid var(--bd)}
+.delbtn{background:none;border:none;cursor:pointer;color:var(--tx3);font-size:18px;padding:4px}
+.empty{text-align:center;padding:20px 0;color:var(--tx3);font-size:12px;line-height:2}
+.addlogbtn{width:100%;padding:12px;background:var(--g-mid);color:#fff;border:none;border-radius:var(--r);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;margin-top:10px;font-weight:600}
+.addlogbtn:active{background:var(--g-dark)}
+.filterbar{background:var(--sur2);padding:7px 11px;display:flex;gap:5px;overflow-x:auto}
+.filterbar::-webkit-scrollbar{display:none}
+.fbtn{padding:4px 10px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid var(--bd);background:var(--sur);color:var(--tx2);white-space:nowrap;flex-shrink:0;font-weight:500}
+.fbtn.active{background:var(--g-mid);color:#fff;border-color:var(--g-mid)}
+.timeline{padding:10px 12px;background:var(--sur)}
+.tl-row{display:flex;gap:10px;margin-bottom:10px;cursor:pointer}
+.tl-date{width:40px;text-align:right;flex-shrink:0}
+.tl-date .td{font-size:11px;font-weight:600;color:var(--tx)}
+.tl-date .tm{font-size:12px}
+.tl-line{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:18px}
+.tl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:2px}
+.tl-bar{width:1px;background:var(--bd);flex:1;margin-top:3px}
+.tl-body{flex:1;background:var(--sur2);border-radius:var(--rs);padding:8px 10px;border:1px solid var(--bd);min-width:0}
+.tl-type{font-size:12px;font-weight:600;color:var(--tx)}
+.tl-meta{font-size:11px;color:var(--tx2);margin-top:2px}
+.tl-note{font-size:11px;color:var(--tx2);margin-top:4px;font-style:italic;word-break:break-all}
+.tl-photo{width:56px;height:56px;object-fit:cover;border-radius:6px;margin-top:5px;border:1px solid var(--bd)}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.sheet{background:var(--sur);border-radius:20px 20px 0 0;padding:18px 18px calc(env(safe-area-inset-bottom,0px)+20px);width:100%;max-width:430px;max-height:88vh;overflow-y:auto}
+.handle{width:32px;height:3px;background:var(--bd);border-radius:3px;margin:0 auto 15px}
+.sheet h3{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--tx)}
+.agrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.abtn{padding:12px 5px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sur2);cursor:pointer;text-align:center;font-size:11px;color:var(--tx2);font-weight:500}
+.abtn .ai{font-size:18px;display:block;margin-bottom:3px}
+.abtn.sel{border-color:var(--g-mid);background:var(--g-pale);color:var(--g-dark)}
+.wxrow{display:flex;gap:7px;margin-bottom:11px}
+.wxbtn{flex:1;padding:9px 5px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sur2);cursor:pointer;text-align:center;font-size:11px;color:var(--tx2);font-weight:500}
+.wxbtn .wi{font-size:20px;display:block;margin-bottom:3px}
+.wxbtn.sel{border-color:var(--blue);background:#E6F1FB;color:#0C447C}
+.fg{margin-bottom:10px}
+.fg label{font-size:11px;color:var(--tx2);display:block;margin-bottom:3px;font-weight:600}
+.fg input,.fg textarea,.fg select{width:100%;border:1px solid var(--bd);border-radius:var(--rs);padding:8px 10px;font-size:13px;background:var(--sur2);color:var(--tx)}
+.fg input[type=number]{width:50%}
+.fg select{margin-top:5px}
+.fg textarea{height:65px;resize:none;font-family:inherit}
+.fg input[type=file]{padding:5px 8px;font-size:12px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--sur2)}
+.ppreview{max-width:100%;border-radius:var(--rs);margin-top:5px;border:1px solid var(--bd);display:none}
+.sbtns{display:flex;gap:7px;margin-top:13px}
+.sbtns button{flex:1;padding:11px;border-radius:var(--rs);font-size:13px;cursor:pointer;font-weight:600}
+.bcx{background:transparent;border:1px solid var(--bd);color:var(--tx2)}
+.bsv{background:var(--g-mid);color:#fff;border:none}
+.det-vp{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center;padding:16px}
+.det-vp.open{display:flex}
+.det-sheet{background:var(--sur);border-radius:16px;padding:18px;width:100%;max-width:400px;max-height:80vh;overflow-y:auto}
+.det-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.closebtn{background:none;border:1px solid var(--bd);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--tx2);display:flex;align-items:center;justify-content:center}
+.dicon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:8px}
+.drow{display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--bd);font-size:12px}
+.drow:last-child{border-bottom:none}
+.dlbl{color:var(--tx2);min-width:54px;flex-shrink:0;font-weight:500}
+.dval{color:var(--tx);flex:1;word-break:break-all}
+.dphoto{max-width:100%;border-radius:var(--rs);margin-top:8px;border:1px solid var(--bd)}
+.toast{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px)+20px);left:50%;transform:translateX(-50%) translateY(60px);background:var(--g-dark);color:#fff;padding:9px 18px;border-radius:24px;font-size:12px;font-weight:500;z-index:400;transition:.25s;opacity:0;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hdr">
+    <div class="hdr-top">
+      <h1>🌱 菜園カレンダー</h1>
+      <div class="mnav">
+        <button onclick="chMonth(-1)" aria-label="前月">‹</button>
+        <span id="mlabel"></span>
+        <button onclick="chMonth(1)" aria-label="次月">›</button>
+      </div>
+    </div>
+  </div>
+  <div class="hbanner" id="hbanner"></div>
+  <div class="vtabs" id="vtabs"></div>
+  <div class="stabs" id="stabs"></div>
+  <div class="vtoggle">
+    <button class="vtbtn active" id="vt-cal" onclick="setView('cal')">📅 カレンダー</button>
+    <button class="vtbtn" id="vt-fert" onclick="setView('fert')">🌿 追肥ビュー</button>
+    <button class="vtbtn" id="vt-trouble" onclick="setView('trouble')">⚠️ トラブルビュー</button>
+  </div>
+
+  <div id="view-cal">
+    <div class="calwrap">
+      <div class="dnames"><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span style="color:var(--blue)">土</span><span style="color:var(--red)">日</span></div>
+      <div class="calgrid" id="calgrid"></div>
+    </div>
+    <div class="legend">
+      <div class="li"><div class="dot dw"></div>水やり</div>
+      <div class="li"><div class="dot df"></div>追肥</div>
+      <div class="li"><div class="dot dp"></div>葉かき</div>
+      <div class="li"><div class="dot di"></div>摘心</div>
+      <div class="li"><div class="dot dh"></div>収穫</div>
+      <div class="li"><div class="dot dt"></div>トラブル</div>
+    </div>
+    <div class="daylog" id="daylog"></div>
+  </div>
+
+  <div id="view-tl" style="display:none">
+    <div class="filterbar" id="filterbar"></div>
+    <div class="timeline" id="timeline"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- 作業記録シート -->
+<div class="modal-bg" id="overlay" onclick="bgClick(event,'overlay')">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3 id="sheettitle">作業を記録する</h3>
+    <div class="agrid">
+      <button class="abtn" onclick="selAct('water')" id="ab-water"><span class="ai">💧</span>水やり</button>
+      <button class="abtn" onclick="selAct('fert')" id="ab-fert"><span class="ai">🌿</span>追肥</button>
+      <button class="abtn" onclick="selAct('prune')" id="ab-prune"><span class="ai">✂️</span>葉かき</button>
+      <button class="abtn" onclick="selAct('pinch')" id="ab-pinch"><span class="ai">🤏</span>摘心</button>
+      <button class="abtn" onclick="selAct('harvest')" id="ab-harvest"><span class="ai">🧺</span>収穫</button>
+      <button class="abtn" onclick="selAct('trouble')" id="ab-trouble"><span class="ai">⚠️</span>トラブル</button>
+    </div>
+    <div id="hqrow" class="fg" style="display:none">
+      <label>収穫量</label>
+      <input type="number" id="hqty" min="1" value="1">
+      <select id="hunit"><option>個</option><option>本</option><option>g</option><option>kg</option><option>房</option></select>
+    </div>
+    <div id="fnrow" class="fg" style="display:none">
+      <label>肥料の種類・メモ</label>
+      <textarea id="fertnote" placeholder="例：ハイポネックス液肥1000倍 / 鶏糞ペレット / 骨粉など"></textarea>
+    </div>
+    <div class="fg">
+      <label>天気</label>
+      <div class="wxrow">
+        <button class="wxbtn" id="wx-sunny" onclick="selWx('sunny')"><span class="wi">☀️</span>晴れ</button>
+        <button class="wxbtn" id="wx-rain" onclick="selWx('rain')"><span class="wi">🌧️</span>雨</button>
+        <button class="wxbtn" id="wx-drizzle" onclick="selWx('drizzle')"><span class="wi">🌦️</span>小雨</button>
+      </div>
+    </div>
+    <div class="fg">
+      <label>写真</label>
+      <input type="file" id="photoinput" accept="image/*" capture="environment" onchange="prevPhoto(this)">
+      <img id="ppreview" class="ppreview" alt="プレビュー">
+    </div>
+    <div class="fg">
+      <label>メモ</label>
+      <textarea id="memoinput" placeholder="気になったことを記録..."></textarea>
+    </div>
+    <div class="sbtns">
+      <button class="bcx" onclick="closeSheet()">キャンセル</button>
+      <button class="bsv" onclick="saveLog()">保存する</button>
+    </div>
+  </div>
+</div>
+
+<!-- 詳細モーダル -->
+<div class="det-vp" id="det-overlay" onclick="bgClick(event,'det-overlay')">
+  <div class="det-sheet" id="det-sheet"></div>
+</div>
+
+<script>
+const WX_ICON={sunny:'☀️',rain:'🌧️',drizzle:'🌦️'};
+const WX_LABEL={sunny:'晴れ',rain:'雨',drizzle:'小雨'};
+const ACT={
+  water:{label:'水やり',dot:'dw',bg:'#E6F1FB',em:'💧',dc:'#378ADD'},
+  fert:{label:'追肥',dot:'df',bg:'#FAEEDA',em:'🌿',dc:'#BA7517'},
+  prune:{label:'葉かき',dot:'dp',bg:'#EAF3DE',em:'✂️',dc:'#639922'},
+  pinch:{label:'摘心',dot:'di',bg:'#EEEDFE',em:'🤏',dc:'#7F77DD'},
+  harvest:{label:'収穫',dot:'dh',bg:'#FAECE7',em:'🧺',dc:'#D85A30'},
+  trouble:{label:'トラブル',dot:'dt',bg:'#FCEBEB',em:'⚠️',dc:'#E24B4A'},
+};
+
+function ld(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+let vegs=ld('gv2_vegs',[
+  {id:'tomato',label:'🍅 トマト',seedlings:['第1苗','第2苗']},
+  {id:'cucumber',label:'🥒 キュウリ',seedlings:['プランターA']},
+  {id:'eggplant',label:'🍆 ナス',seedlings:['畑1番']},
+  {id:'basil',label:'🌿 バジル',seedlings:['キッチン']},
+]);
+let logs=ld('gv2_logs',{});
+
+let curY=new Date().getFullYear(),curM=new Date().getMonth();
+let curVeg=0,curS=0,curDay=null,curAct=null,curWx=null,curPhoto=null;
+let curView='cal',curFilter='all';
+
+function lk(vid,si,y,m,d){return `${vid}|${si}|${y}-${m}-${d}`;}
+function getE(vid,si,d){return logs[lk(vid,si,curY,curM,d)]||[];}
+function curE(d){return getE(vegs[curVeg].id,curS,d);}
+
+function htotals(){
+  const veg=vegs[curVeg];const res={};
+  veg.seedlings.forEach((s,si)=>{
+    let tot=0,unit='個';
+    for(let d=1;d<=31;d++){
+      (logs[lk(veg.id,si,curY,curM,d)]||[]).forEach(l=>{if(l.act==='harvest'&&l.qty){tot+=Number(l.qty);if(l.unit)unit=l.unit;}});
+    }
+    if(tot>0)res[s]={tot,unit};
+  });
+  return res;
+}
+
+function renderBanner(){
+  const t=htotals();const veg=vegs[curVeg];
+  document.getElementById('hbanner').innerHTML=veg.seedlings.map(s=>{
+    const v=t[s];
+    return `<div class="hpill">${s}：収穫 <strong>${v?v.tot+v.unit:'0個'}</strong></div>`;
+  }).join('');
+}
+
+function renderVTabs(){
+  document.getElementById('vtabs').innerHTML=vegs.map((v,i)=>`<button class="vtab${i===curVeg?' active':''}" onclick="selVeg(${i})">${v.label}</button>`).join('')
+    +`<button style="padding:10px 12px;white-space:nowrap;font-size:12px;color:var(--tx3);cursor:pointer;border:none;background:none;flex-shrink:0" onclick="openVegMgr()">＋ 管理</button>`;
+}
+
+function renderSTabs(){
+  const veg=vegs[curVeg];
+  document.getElementById('stabs').innerHTML=veg.seedlings.map((s,i)=>`<button class="schip${i===curS?' active':''}" onclick="selS(${i})">${s}</button>`).join('')
+    +`<button style="padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px dashed var(--bd);background:none;color:var(--tx3);white-space:nowrap;flex-shrink:0" onclick="addSeedlingPrompt()">＋ 苗追加</button>`;
+}
+
+function renderCal(){
+  document.getElementById('mlabel').textContent=`${curY}年${curM+1}月`;
+  const grid=document.getElementById('calgrid');grid.innerHTML='';
+  const first=new Date(curY,curM,1).getDay();
+  const off=(first===0)?6:first-1;
+  const days=new Date(curY,curM+1,0).getDate();
+  const today=new Date();
+  for(let i=0;i<off;i++){
+    const c=document.createElement('div');c.className='ccell om';
+    c.innerHTML=`<div class="dnum">${new Date(curY,curM,1-off+i).getDate()}</div>`;
+    grid.appendChild(c);
+  }
+  for(let d=1;d<=days;d++){
+    const c=document.createElement('div');
+    const isTod=(today.getFullYear()===curY&&today.getMonth()===curM&&today.getDate()===d);
+    c.className='ccell'+(isTod?' today':'')+(curDay===d?' sel':'');
+    const ents=curE(d);
+    const acts=[...new Set(ents.map(e=>e.act))];
+    let htot=0;
+    vegs[curVeg].seedlings.forEach((_,si)=>{
+      (logs[lk(vegs[curVeg].id,si,curY,curM,d)]||[]).forEach(l=>{if(l.act==='harvest'&&l.qty)htot+=Number(l.qty);});
+    });
+    const wx=ents.length>0&&ents[0].wx?WX_ICON[ents[0].wx]||'':'';
+    c.innerHTML=`<div class="dnum">${d}</div><div class="drow">${acts.map(a=>`<div class="dot ${ACT[a].dot}"></div>`).join('')}</div>${htot>0?`<div class="hnum">${htot}</div>`:''}${wx?`<div class="wxc">${wx}</div>`:''}`;
+    c.onclick=()=>selDay(d);
+    grid.appendChild(c);
+  }
+}
+
+function renderDayLog(){
+  const el=document.getElementById('daylog');
+  if(!curDay){el.innerHTML='<div class="empty">📅<br>日付をタップして<br>記録を確認・追加</div>';return;}
+  const ents=curE(curDay);
+  const s=vegs[curVeg].seedlings[curS];
+  let h=`<div class="dl-title"><span>${curM+1}月${curDay}日 — ${s}</span><button class="add-sm" onclick="openSheet()">＋ 追加</button></div>`;
+  if(!ents.length){h+='<div class="empty" style="padding:10px 0">記録なし</div>';}
+  else ents.forEach((e,ei)=>{
+    const m=ACT[e.act];
+    const q=e.act==='harvest'&&e.qty?` — ${e.qty}${e.unit||'個'}` :'';
+    const wx=e.wx?` ${WX_ICON[e.wx]||''}` :'';
+    h+=`<div class="lentry" onclick="showDet(${ei})">
+      <div class="licon" style="background:${m.bg}">${m.em}</div>
+      <div class="lbody">
+        <div class="ltype">${m.label}${q}${wx}</div>
+        <div class="lmeta">${s}</div>
+        ${e.fertnote?`<div class="lnote">🌿 ${e.fertnote}</div>`:''}
+        ${e.memo?`<div class="lnote">📝 ${e.memo}</div>`:''}
+        ${e.photo?`<img src="${e.photo}" class="lphoto" alt="写真">`:''}
+      </div>
+      <button class="delbtn" onclick="event.stopPropagation();delLog(${ei})" aria-label="削除">🗑</button>
+    </div>`;
+  });
+  h+=`<button class="addlogbtn" onclick="openSheet()">＋ 作業を記録する</button>`;
+  el.innerHTML=h;
+}
+
+function showDet(ei){
+  const e=curE(curDay)[ei];if(!e)return;
+  const m=ACT[e.act];const s=vegs[curVeg].seedlings[curS];
+  const q=e.act==='harvest'&&e.qty?`${e.qty}${e.unit||'個'}`:'-';
+  document.getElementById('det-sheet').innerHTML=`
+    <div class="det-hdr">
+      <div>
+        <div class="dicon" style="background:${m.bg}">${m.em}</div>
+        <div style="font-size:15px;font-weight:600;color:var(--tx)">${m.label}</div>
+      </div>
+      <button class="closebtn" onclick="closeDet()">✕</button>
+    </div>
+    <div class="drow"><span class="dlbl">日付</span><span class="dval">${curY}年${curM+1}月${curDay}日</span></div>
+    <div class="drow"><span class="dlbl">苗</span><span class="dval">${vegs[curVeg].label} / ${s}</span></div>
+    <div class="drow"><span class="dlbl">天気</span><span class="dval">${e.wx?WX_ICON[e.wx]+' '+WX_LABEL[e.wx]:'—'}</span></div>
+    ${e.act==='harvest'?`<div class="drow"><span class="dlbl">収穫量</span><span class="dval">${q}</span></div>`:''}
+    ${e.act==='fert'?`<div class="drow"><span class="dlbl">肥料</span><span class="dval">${e.fertnote||'—'}</span></div>`:''}
+    <div class="drow"><span class="dlbl">メモ</span><span class="dval">${e.memo||'—'}</span></div>
+    ${e.photo?`<img src="${e.photo}" class="dphoto" alt="写真">`:''}`;
+  document.getElementById('det-overlay').classList.add('open');
+}
+function closeDet(){document.getElementById('det-overlay').classList.remove('open');}
+
+function renderTL(){
+  const veg=vegs[curVeg];const s=veg.seedlings[curS];
+  const fa=curFilter==='all'?null:curFilter;
+  const all=[];
+  for(let d=1;d<=31;d++){
+    curE(d).forEach((e,ei)=>{
+      if(!fa||e.act===fa)all.push({d,e,ei});
+    });
+  }
+  document.getElementById('filterbar').innerHTML=[
+    {k:'all',l:'すべて'},{k:'fert',l:'追肥のみ'},{k:'trouble',l:'トラブルのみ'}
+  ].map(f=>`<button class="fbtn${curFilter===f.k?' active':''}" onclick="setFilter('${f.k}')">${f.l}</button>`).join('');
+  if(!all.length){document.getElementById('timeline').innerHTML='<div class="empty">該当する記録がありません</div>';return;}
+  document.getElementById('timeline').innerHTML=all.map(({d,e,ei},idx)=>{
+    const m=ACT[e.act];const isLast=idx===all.length-1;
+    const q=e.act==='harvest'&&e.qty?` — ${e.qty}${e.unit||'個'}` :'';
+    const wx=e.wx?` ${WX_ICON[e.wx]||''}` :'';
+    return `<div class="tl-row" onclick="selDay(${d});setView('cal');setTimeout(()=>showDet(${ei}),50)">
+      <div class="tl-date"><div class="td">${curM+1}/${d}</div><div class="tm">${e.wx?WX_ICON[e.wx]||'':''}</div></div>
+      <div class="tl-line"><div class="tl-dot" style="background:${m.dc}"></div>${!isLast?'<div class="tl-bar"></div>':''}</div>
+      <div class="tl-body">
+        <div class="tl-type">${m.em} ${m.label}${q}${wx}</div>
+        <div class="tl-meta">${s}</div>
+        ${e.act==='fert'&&e.fertnote?`<div class="tl-note">🌿 ${e.fertnote}</div>`:''}
+        ${e.memo?`<div class="tl-note">📝 ${e.memo}</div>`:''}
+        ${e.photo?`<img src="${e.photo}" class="tl-photo" alt="写真">`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setView(v){
+  curView=v;
+  if(v==='fert')curFilter='fert';
+  else if(v==='trouble')curFilter='trouble';
+  else curFilter='all';
+  document.getElementById('view-cal').style.display=v==='cal'?'block':'none';
+  document.getElementById('view-tl').style.display=v!=='cal'?'block':'none';
+  ['cal','fert','trouble'].forEach(id=>{
+    const b=document.getElementById('vt-'+id);
+    if(b)b.className='vtbtn'+(v===id?' active':'');
+  });
+  if(v!=='cal')renderTL();
+}
+function setFilter(f){curFilter=f;renderTL();}
+
+function openSheet(){
+  if(!curDay){showToast('日付を先に選んでください');return;}
+  curAct=null;curWx=null;curPhoto=null;
+  ['ab-water','ab-fert','ab-prune','ab-pinch','ab-harvest','ab-trouble'].forEach(id=>document.getElementById(id).classList.remove('sel'));
+  ['wx-sunny','wx-rain','wx-drizzle'].forEach(id=>document.getElementById(id).classList.remove('sel'));
+  document.getElementById('memoinput').value='';
+  document.getElementById('fertnote').value='';
+  document.getElementById('hqty').value=1;
+  document.getElementById('hunit').value='個';
+  document.getElementById('hqrow').style.display='none';
+  document.getElementById('fnrow').style.display='none';
+  document.getElementById('photoinput').value='';
+  document.getElementById('ppreview').style.display='none';
+  document.getElementById('sheettitle').textContent=`${curM+1}月${curDay}日 — ${vegs[curVeg].seedlings[curS]}`;
+  document.getElementById('overlay').classList.add('open');
+}
+function closeSheet(){document.getElementById('overlay').classList.remove('open');}
+function bgClick(e,id){if(e.target===document.getElementById(id)){if(id==='overlay')closeSheet();else closeDet();}}
+function selAct(a){
+  curAct=a;
+  ['ab-water','ab-fert','ab-prune','ab-pinch','ab-harvest','ab-trouble'].forEach(id=>document.getElementById(id).classList.remove('sel'));
+  document.getElementById('ab-'+a).classList.add('sel');
+  document.getElementById('hqrow').style.display=a==='harvest'?'block':'none';
+  document.getElementById('fnrow').style.display=a==='fert'?'block':'none';
+}
+function selWx(w){
+  curWx=w;
+  ['wx-sunny','wx-rain','wx-drizzle'].forEach(id=>document.getElementById(id).classList.remove('sel'));
+  document.getElementById('wx-'+w).classList.add('sel');
+}
+function prevPhoto(inp){
+  if(!inp.files||!inp.files[0])return;
+  const r=new FileReader();
+  r.onload=e=>{curPhoto=e.target.result;const i=document.getElementById('ppreview');i.src=curPhoto;i.style.display='block';};
+  r.readAsDataURL(inp.files[0]);
+}
+function saveLog(){
+  if(!curAct){showToast('作業の種類を選んでください');return;}
+  const k=lk(vegs[curVeg].id,curS,curY,curM,curDay);
+  if(!logs[k])logs[k]=[];
+  const qty=curAct==='harvest'?Number(document.getElementById('hqty').value)||1:null;
+  logs[k].push({
+    act:curAct,wx:curWx,
+    memo:document.getElementById('memoinput').value.trim(),
+    photo:curPhoto,qty,
+    unit:document.getElementById('hunit').value,
+    fertnote:curAct==='fert'?document.getElementById('fertnote').value.trim():'',
+  });
+  sv('gv2_logs',logs);
+  closeSheet();renderAll();
+  showToast(`${ACT[curAct].label}を記録しました`);
+}
+function delLog(ei){
+  const k=lk(vegs[curVeg].id,curS,curY,curM,curDay);
+  if(logs[k])logs[k].splice(ei,1);
+  sv('gv2_logs',logs);renderAll();showToast('削除しました');
+}
+function selVeg(i){curVeg=i;curS=0;curDay=null;renderAll();}
+function selS(i){curS=i;renderAll();}
+function selDay(d){curDay=d;if(curView==='cal'){renderCal();renderDayLog();}}
+function chMonth(dir){
+  curM+=dir;if(curM>11){curM=0;curY++;}if(curM<0){curM=11;curY--;}
+  curDay=null;renderAll();
+}
+function openVegMgr(){
+  const name=prompt('新しい野菜の名前（例：🍅 ミニトマト）');
+  if(!name||!name.trim())return;
+  const seedling=prompt('最初の苗の名前（例：第1苗）')||'第1苗';
+  vegs.push({id:'veg_'+Date.now(),label:name.trim(),seedlings:[seedling.trim()]});
+  sv('gv2_vegs',vegs);renderAll();showToast(`${name}を追加しました`);
+}
+function addSeedlingPrompt(){
+  const name=prompt(`「${vegs[curVeg].label}」に苗を追加\n苗の名前を入力`);
+  if(!name||!name.trim())return;
+  vegs[curVeg].seedlings.push(name.trim());
+  sv('gv2_vegs',vegs);renderAll();showToast(`${name}を追加しました`);
+}
+function renderAll(){renderBanner();renderVTabs();renderSTabs();renderCal();renderDayLog();if(curView!=='cal')renderTL();}
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
+renderAll();
+</script>
+</body>
+</html>
