@@ -355,6 +355,36 @@ const VEG_LIST=[
 function ld(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
 function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
+// 旧バージョンからのデータ移行
+function migrateData(){
+  // gv3 → gv4 移行
+  const oldVegs3=ld('gv3_vegs',null);
+  const oldLogs3=ld('gv3_logs',null);
+  if(oldVegs3&&!localStorage.getItem('gv4_vegs')){
+    // 苗データにstartDateを追加
+    oldVegs3.forEach(v=>{
+      (v.seedlings||[]).forEach(s=>{if(!s.startDate)s.startDate='';});
+    });
+    sv('gv4_vegs',oldVegs3);
+  }
+  if(oldLogs3&&!localStorage.getItem('gv4_logs')){
+    sv('gv4_logs',oldLogs3);
+  }
+  // gv2 → gv4 移行
+  const oldVegs2=ld('gv2_vegs',null);
+  const oldLogs2=ld('gv2_logs',null);
+  if(oldVegs2&&!localStorage.getItem('gv4_vegs')){
+    oldVegs2.forEach(v=>{
+      (v.seedlings||[]).forEach(s=>{if(!s.startDate)s.startDate='';});
+    });
+    sv('gv4_vegs',oldVegs2);
+  }
+  if(oldLogs2&&!localStorage.getItem('gv4_logs')){
+    sv('gv4_logs',oldLogs2);
+  }
+}
+migrateData();
+
 let vegs=ld('gv4_vegs',[
   {id:'tomato',label:'🍅 トマト',seedlings:[
     {id:'s1',name:'第1苗',ended:false,startDate:''},
