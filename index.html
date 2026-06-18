@@ -10,22 +10,22 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --g-dark:#1B4332;--g-mid:#2D6A4F;--g-light:#52b788;--g-pale:#d8f3dc;
-  --bg:#f8f9fa;--sur:#ffffff;--sur2:#f1f3f5;--bd:#dee2e6;
+  --g-dark:#1B4332;--g-mid:#2D6A4F;--g-pale:#d8f3dc;
+  --bg:#f8f9fa;--sur:#fff;--sur2:#f1f3f5;--bd:#dee2e6;
   --tx:#212529;--tx2:#6c757d;--tx3:#adb5bd;
   --r:10px;--rs:6px;
-  --blue:#378ADD;--amber:#BA7517;--purple:#7F77DD;--coral:#D85A30;--red:#E24B4A;
+  --blue:#2176AE;--amber:#B5580A;--green2:#3A7D0A;
+  --purple:#6A4FC8;--coral:#C94820;--red:#C0392B;
 }
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
-.app{max-width:430px;margin:0 auto;background:var(--bg);min-height:100vh}
+.app{max-width:430px;margin:0 auto;background:var(--bg);min-height:100vh;padding-bottom:60px}
 .hdr{background:var(--g-mid);padding:env(safe-area-inset-top,12px) 15px 12px;color:#fff}
 .hdr-top{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
-.hdr h1{font-size:17px;font-weight:600;display:flex;align-items:center;gap:7px}
+.hdr h1{font-size:17px;font-weight:600}
 .mnav{display:flex;align-items:center;gap:5px}
 .mnav button{background:rgba(255,255,255,.18);border:none;color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
 .mnav span{font-size:14px;font-weight:500;min-width:72px;text-align:center}
-/* YEAR FILTER */
-.year-bar{background:var(--g-dark);padding:6px 12px;display:flex;align-items:center;gap:6px;overflow-x:auto}
+.year-bar{background:var(--g-dark);padding:6px 12px;display:flex;gap:6px;overflow-x:auto}
 .year-bar::-webkit-scrollbar{display:none}
 .ypill{padding:4px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.25);background:transparent;color:#d8f3dc;white-space:nowrap;flex-shrink:0;font-weight:500}
 .ypill.active{background:#fff;color:var(--g-dark)}
@@ -38,59 +38,70 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .vtab{padding:10px 14px;white-space:nowrap;font-size:12px;color:var(--tx2);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;flex-shrink:0;font-weight:500}
 .vtab.active{color:var(--g-mid);border-bottom-color:var(--g-mid)}
 .vtab.ended{color:var(--tx3);text-decoration:line-through}
-/* SEEDLING TABS */
 .stabs{background:var(--sur2);padding:7px 11px;display:flex;gap:5px;overflow-x:auto;align-items:center}
 .stabs::-webkit-scrollbar{display:none}
-.schip{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--bd);background:var(--sur);color:var(--tx2);white-space:nowrap;flex-shrink:0;font-weight:500;display:flex;align-items:center;gap:4px}
+.schip{padding:5px 12px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid var(--bd);background:var(--sur);color:var(--tx2);white-space:nowrap;flex-shrink:0;font-weight:500;display:flex;align-items:center;gap:4px;line-height:1.3}
 .schip.active{background:var(--g-mid);color:#fff;border-color:var(--g-mid)}
-.schip.ended{color:var(--tx3);border-style:dashed;background:var(--sur2)}
-.schip.ended.active{background:var(--tx3);color:#fff;border-color:var(--tx3)}
+.schip.ended{color:var(--tx3);border-style:dashed}
+.schip.ended.active{background:var(--tx3);color:#fff}
+.day-badge{font-size:10px;opacity:.75}
 .ended-badge{font-size:9px;background:var(--tx3);color:#fff;padding:1px 4px;border-radius:4px}
-.schip.active .ended-badge{background:rgba(255,255,255,.35);color:#fff}
 .vtoggle{background:var(--sur);border-bottom:1px solid var(--bd);display:flex;padding:7px 11px;gap:6px}
 .vtbtn{flex:1;padding:7px 0;border-radius:var(--rs);font-size:11px;cursor:pointer;border:1px solid var(--bd);background:transparent;color:var(--tx2);display:flex;align-items:center;justify-content:center;gap:4px;font-weight:500}
 .vtbtn.active{background:var(--g-mid);color:#fff;border-color:var(--g-mid)}
+
+/* CALENDAR */
 .calwrap{background:var(--sur);padding:10px 11px}
 .dnames{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:4px}
 .dnames span{font-size:10px;color:var(--tx3)}
 .calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
-.ccell{min-height:48px;border-radius:6px;padding:3px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.ccell{min-height:52px;border-radius:6px;padding:3px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center}
 .ccell:active{background:var(--sur2)}
 .ccell.sel{background:var(--g-pale)}
 .ccell.today .dnum{background:var(--g-mid);color:#fff;border-radius:50%}
 .ccell.om .dnum{color:var(--tx3)}
 .dnum{font-size:12px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;color:var(--tx)}
-.drow{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;margin-top:1px;max-width:30px}
-.dot{width:5px;height:5px;border-radius:50%}
-.dw{background:var(--blue)}.df{background:var(--amber)}.dp{background:#639922}
-.di{background:var(--purple)}.dh{background:var(--coral)}.dt{background:var(--red)}
+.irow{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;margin-top:2px;max-width:34px}
+/* アクションアイコン（色＋形） */
+.aico{width:8px;height:8px;flex-shrink:0;display:inline-block}
+.aico-water{background:var(--blue);border-radius:0 50% 50% 50%;transform:rotate(-45deg)}
+.aico-fert{background:var(--amber);border-radius:50%}
+.aico-prune{background:var(--green2);clip-path:polygon(50% 0%,100% 100%,0% 100%)}
+.aico-pinch{background:var(--purple);clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.aico-harvest{background:var(--coral);clip-path:polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%)}
+.aico-trouble{background:var(--red);clip-path:polygon(50% 0%,0% 100%,100% 100%)}
 .hnum{font-size:9px;color:var(--coral);font-weight:600;line-height:1;margin-top:1px}
-.wxc{font-size:10px;margin-top:1px}
-.legend{display:flex;flex-wrap:wrap;gap:5px;padding:7px 11px;background:var(--sur);border-top:1px solid var(--bd)}
-.li{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--tx2)}
+.wxc{font-size:9px;margin-top:1px}
+
+/* LEGEND */
+.legend{display:flex;flex-wrap:wrap;gap:6px;padding:8px 11px;background:var(--sur);border-top:1px solid var(--bd)}
+.li{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--tx2)}
+
+/* DAY LOG */
 .daylog{background:var(--sur);border-top:3px solid var(--bg);padding:13px}
 .dl-title{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:9px;display:flex;justify-content:space-between;align-items:center}
 .add-sm{font-size:11px;padding:4px 9px;border-radius:7px;border:1px solid var(--bd);background:var(--sur2);cursor:pointer;color:var(--tx2)}
-.lentry{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid var(--bd);cursor:pointer}
+.lentry{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid var(--bd);cursor:pointer}
 .lentry:last-of-type{border-bottom:none}
-.licon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.licon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
 .lbody{flex:1;min-width:0}
-.ltype{font-size:12px;font-weight:600;color:var(--tx)}
-.lmeta{font-size:11px;color:var(--tx2);margin-top:1px}
-.lnote{font-size:11px;color:var(--tx2);margin-top:3px;font-style:italic;word-break:break-all}
-.lphoto{width:52px;height:52px;object-fit:cover;border-radius:6px;margin-top:4px;border:1px solid var(--bd)}
+.ltype{font-size:13px;font-weight:600;color:var(--tx)}
+.lmeta{font-size:11px;color:var(--tx2);margin-top:2px}
+.lnote{font-size:11px;color:var(--tx2);margin-top:3px;word-break:break-all;line-height:1.5}
+.lphoto{width:56px;height:56px;object-fit:cover;border-radius:6px;margin-top:5px;border:1px solid var(--bd);cursor:pointer}
 .delbtn{background:none;border:none;cursor:pointer;color:var(--tx3);font-size:18px;padding:4px}
 .empty{text-align:center;padding:20px 0;color:var(--tx3);font-size:12px;line-height:2}
 .addlogbtn{width:100%;padding:12px;background:var(--g-mid);color:#fff;border:none;border-radius:var(--r);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;margin-top:10px;font-weight:600}
-.addlogbtn:active{background:var(--g-dark)}
-.ended-notice{background:#fff3cd;border:1px solid #ffc107;border-radius:var(--rs);padding:8px 12px;margin-bottom:10px;font-size:12px;color:#856404;display:flex;align-items:center;gap:8px}
+.ended-notice{background:#fff3cd;border:1px solid #ffc107;border-radius:var(--rs);padding:8px 12px;margin-bottom:10px;font-size:12px;color:#856404}
+
+/* TIMELINE */
 .filterbar{background:var(--sur2);padding:7px 11px;display:flex;gap:5px;overflow-x:auto}
 .filterbar::-webkit-scrollbar{display:none}
 .fbtn{padding:4px 10px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid var(--bd);background:var(--sur);color:var(--tx2);white-space:nowrap;flex-shrink:0;font-weight:500}
 .fbtn.active{background:var(--g-mid);color:#fff;border-color:var(--g-mid)}
 .timeline{padding:10px 12px;background:var(--sur)}
 .tl-row{display:flex;gap:10px;margin-bottom:10px;cursor:pointer}
-.tl-date{width:40px;text-align:right;flex-shrink:0}
+.tl-date{width:38px;text-align:right;flex-shrink:0}
 .tl-date .td{font-size:11px;font-weight:600;color:var(--tx)}
 .tl-date .tm{font-size:12px}
 .tl-line{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:18px}
@@ -99,57 +110,82 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .tl-body{flex:1;background:var(--sur2);border-radius:var(--rs);padding:8px 10px;border:1px solid var(--bd);min-width:0}
 .tl-type{font-size:12px;font-weight:600;color:var(--tx)}
 .tl-meta{font-size:11px;color:var(--tx2);margin-top:2px}
-.tl-note{font-size:11px;color:var(--tx2);margin-top:4px;font-style:italic;word-break:break-all}
+.tl-note{font-size:11px;color:var(--tx2);margin-top:4px;word-break:break-all;line-height:1.5}
 .tl-photo{width:56px;height:56px;object-fit:cover;border-radius:6px;margin-top:5px;border:1px solid var(--bd)}
+
 /* MODALS */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center}
 .modal-bg.open{display:flex}
-.sheet{background:var(--sur);border-radius:20px 20px 0 0;padding:18px 18px calc(env(safe-area-inset-bottom,0px)+20px);width:100%;max-width:430px;max-height:88vh;overflow-y:auto}
+.sheet{background:var(--sur);border-radius:20px 20px 0 0;padding:18px 18px calc(env(safe-area-inset-bottom,0px)+20px);width:100%;max-width:430px;max-height:90vh;overflow-y:auto}
 .handle{width:32px;height:3px;background:var(--bd);border-radius:3px;margin:0 auto 15px}
 .sheet h3{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--tx)}
 .agrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
 .abtn{padding:12px 5px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sur2);cursor:pointer;text-align:center;font-size:11px;color:var(--tx2);font-weight:500}
-.abtn .ai{font-size:18px;display:block;margin-bottom:3px}
-.abtn.sel{border-color:var(--g-mid);background:var(--g-pale);color:var(--g-dark)}
+.abtn .ai{font-size:20px;display:block;margin-bottom:3px}
+.abtn.sel{border-width:2px;font-weight:700}
+.abtn-water.sel{border-color:var(--blue);background:#E3F0FB;color:var(--blue)}
+.abtn-fert.sel{border-color:var(--amber);background:#FDF0DC;color:var(--amber)}
+.abtn-prune.sel{border-color:var(--green2);background:#EAF3DE;color:var(--green2)}
+.abtn-pinch.sel{border-color:var(--purple);background:#EEEDFE;color:var(--purple)}
+.abtn-harvest.sel{border-color:var(--coral);background:#FAECE7;color:var(--coral)}
+.abtn-trouble.sel{border-color:var(--red);background:#FCEBEB;color:var(--red)}
 .wxrow{display:flex;gap:7px;margin-bottom:11px}
 .wxbtn{flex:1;padding:9px 5px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sur2);cursor:pointer;text-align:center;font-size:11px;color:var(--tx2);font-weight:500}
 .wxbtn .wi{font-size:20px;display:block;margin-bottom:3px}
-.wxbtn.sel{border-color:var(--blue);background:#E6F1FB;color:#0C447C}
+.wxbtn.sel{border-color:var(--blue);background:#E3F0FB;color:#0C447C;border-width:2px}
 .fg{margin-bottom:10px}
 .fg label{font-size:11px;color:var(--tx2);display:block;margin-bottom:3px;font-weight:600}
 .fg input,.fg textarea,.fg select{width:100%;border:1px solid var(--bd);border-radius:var(--rs);padding:8px 10px;font-size:13px;background:var(--sur2);color:var(--tx)}
 .fg input[type=number]{width:50%}
 .fg select{margin-top:5px}
-.fg textarea{height:65px;resize:none;font-family:inherit}
+.fg textarea{height:70px;resize:none;font-family:inherit}
 .fg input[type=file]{padding:5px 8px;font-size:12px}
 .ppreview{max-width:100%;border-radius:var(--rs);margin-top:5px;border:1px solid var(--bd);display:none}
 .sbtns{display:flex;gap:7px;margin-top:13px}
 .sbtns button{flex:1;padding:11px;border-radius:var(--rs);font-size:13px;cursor:pointer;font-weight:600}
 .bcx{background:transparent;border:1px solid var(--bd);color:var(--tx2)}
 .bsv{background:var(--g-mid);color:#fff;border:none}
-.bred{background:#dc3545;color:#fff;border:none}
+
 /* DETAIL */
 .det-vp{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center;padding:16px}
 .det-vp.open{display:flex}
-.det-sheet{background:var(--sur);border-radius:16px;padding:18px;width:100%;max-width:400px;max-height:80vh;overflow-y:auto}
+.det-sheet{background:var(--sur);border-radius:16px;padding:18px;width:100%;max-width:400px;max-height:82vh;overflow-y:auto}
 .det-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
 .closebtn{background:none;border:1px solid var(--bd);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--tx2);display:flex;align-items:center;justify-content:center}
-.dicon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:8px}
-.drow{display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--bd);font-size:12px}
+.dicon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:6px}
+.drow{display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--bd);font-size:12px}
 .drow:last-child{border-bottom:none}
-.dlbl{color:var(--tx2);min-width:54px;flex-shrink:0;font-weight:500}
-.dval{color:var(--tx);flex:1;word-break:break-all}
-.dphoto{max-width:100%;border-radius:var(--rs);margin-top:8px;border:1px solid var(--bd)}
+.dlbl{color:var(--tx2);min-width:56px;flex-shrink:0;font-weight:600}
+.dval{color:var(--tx);flex:1;word-break:break-all;line-height:1.6}
+.dphoto{max-width:100%;border-radius:var(--rs);margin-top:8px;border:1px solid var(--bd);cursor:pointer}
+
 /* SEEDLING MANAGER */
 .smgr-item{background:var(--sur2);border:1px solid var(--bd);border-radius:var(--rs);padding:11px 12px;margin-bottom:8px}
 .smgr-row{display:flex;align-items:center;gap:8px}
 .smgr-name{flex:1;font-size:13px;font-weight:500;color:var(--tx)}
-.smgr-ended{font-size:10px;background:var(--tx3);color:#fff;padding:2px 6px;border-radius:4px}
-.smgr-btns{display:flex;gap:5px}
-.smgr-btn{padding:4px 9px;border-radius:var(--rs);font-size:11px;border:1px solid var(--bd);background:var(--sur);cursor:pointer;color:var(--tx2);font-weight:500}
+.smgr-sub{font-size:11px;color:var(--tx2);margin-top:2px}
+.smgr-btns{display:flex;gap:5px;flex-shrink:0}
+.smgr-btn{padding:4px 9px;border-radius:var(--rs);font-size:11px;border:1px solid var(--bd);background:var(--sur);cursor:pointer;color:var(--tx2);font-weight:500;white-space:nowrap}
 .smgr-btn.red{border-color:#dc3545;color:#dc3545}
 .smgr-btn.green{border-color:var(--g-mid);color:var(--g-mid)}
-.toast{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px)+20px);left:50%;transform:translateX(-50%) translateY(60px);background:var(--g-dark);color:#fff;padding:9px 18px;border-radius:24px;font-size:12px;font-weight:500;z-index:400;transition:.25s;opacity:0;pointer-events:none;white-space:nowrap}
+
+/* VEG SELECT */
+.veg-select-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:300px;overflow-y:auto;margin-bottom:12px}
+.veg-sel-btn{padding:9px 8px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sur2);cursor:pointer;text-align:left;font-size:12px;color:var(--tx2);font-weight:500}
+.veg-sel-btn.sel{border-color:var(--g-mid);background:var(--g-pale);color:var(--g-dark);font-weight:700}
+
+/* BOTTOM BAR */
+.bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--sur);border-top:1px solid var(--bd);padding:9px 12px calc(env(safe-area-inset-bottom,0px)+9px);display:flex;gap:8px;z-index:100}
+.bottom-bar button{flex:1;padding:9px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sur2);color:var(--tx2);font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px}
+.bottom-bar button.primary{background:var(--g-pale);border-color:var(--g-mid);color:var(--g-dark)}
+
+/* PHOTO VIEWER */
+.photo-vp{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:500;align-items:center;justify-content:center}
+.photo-vp.open{display:flex}
+.photo-vp img{max-width:95vw;max-height:90vh;border-radius:8px}
+.photo-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.2);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:20px}
+
+.toast{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px)+70px);left:50%;transform:translateX(-50%) translateY(60px);background:var(--g-dark);color:#fff;padding:9px 18px;border-radius:24px;font-size:12px;font-weight:500;z-index:600;transition:.25s;opacity:0;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
@@ -159,9 +195,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="hdr-top">
       <h1>🌱 菜園カレンダー</h1>
       <div class="mnav">
-        <button onclick="chMonth(-1)" aria-label="前月">‹</button>
+        <button onclick="chMonth(-1)">‹</button>
         <span id="mlabel"></span>
-        <button onclick="chMonth(1)" aria-label="次月">›</button>
+        <button onclick="chMonth(1)">›</button>
       </div>
     </div>
   </div>
@@ -180,12 +216,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="calgrid" id="calgrid"></div>
     </div>
     <div class="legend">
-      <div class="li"><div class="dot dw"></div>水やり</div>
-      <div class="li"><div class="dot df"></div>追肥</div>
-      <div class="li"><div class="dot dp"></div>葉かき</div>
-      <div class="li"><div class="dot di"></div>摘心</div>
-      <div class="li"><div class="dot dh"></div>収穫</div>
-      <div class="li"><div class="dot dt"></div>トラブル</div>
+      <div class="li"><span class="aico aico-water" style="width:10px;height:10px"></span>水やり</div>
+      <div class="li"><span class="aico aico-fert" style="width:10px;height:10px"></span>追肥</div>
+      <div class="li"><span class="aico aico-prune" style="width:10px;height:10px"></span>葉かき</div>
+      <div class="li"><span class="aico aico-pinch" style="width:10px;height:10px"></span>摘心</div>
+      <div class="li"><span class="aico aico-harvest" style="width:10px;height:10px"></span>収穫</div>
+      <div class="li"><span class="aico aico-trouble" style="width:10px;height:10px"></span>トラブル</div>
     </div>
     <div class="daylog" id="daylog"></div>
   </div>
@@ -193,6 +229,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="filterbar" id="filterbar"></div>
     <div class="timeline" id="timeline"></div>
   </div>
+</div>
+
+<div class="bottom-bar">
+  <button class="primary" onclick="exportData()">📥 バックアップ保存</button>
+  <button onclick="importData()">📤 データ復元</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -203,12 +244,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="handle"></div>
     <h3 id="sheettitle">作業を記録する</h3>
     <div class="agrid">
-      <button class="abtn" onclick="selAct('water')" id="ab-water"><span class="ai">💧</span>水やり</button>
-      <button class="abtn" onclick="selAct('fert')" id="ab-fert"><span class="ai">🌿</span>追肥</button>
-      <button class="abtn" onclick="selAct('prune')" id="ab-prune"><span class="ai">✂️</span>葉かき</button>
-      <button class="abtn" onclick="selAct('pinch')" id="ab-pinch"><span class="ai">🤏</span>摘心</button>
-      <button class="abtn" onclick="selAct('harvest')" id="ab-harvest"><span class="ai">🧺</span>収穫</button>
-      <button class="abtn" onclick="selAct('trouble')" id="ab-trouble"><span class="ai">⚠️</span>トラブル</button>
+      <button class="abtn abtn-water" onclick="selAct('water')" id="ab-water"><span class="ai">💧</span>水やり</button>
+      <button class="abtn abtn-fert" onclick="selAct('fert')" id="ab-fert"><span class="ai">🌿</span>追肥</button>
+      <button class="abtn abtn-prune" onclick="selAct('prune')" id="ab-prune"><span class="ai">✂️</span>葉かき</button>
+      <button class="abtn abtn-pinch" onclick="selAct('pinch')" id="ab-pinch"><span class="ai">🤏</span>摘心</button>
+      <button class="abtn abtn-harvest" onclick="selAct('harvest')" id="ab-harvest"><span class="ai">🧺</span>収穫</button>
+      <button class="abtn abtn-trouble" onclick="selAct('trouble')" id="ab-trouble"><span class="ai">⚠️</span>トラブル</button>
     </div>
     <div id="hqrow" class="fg" style="display:none">
       <label>収穫量</label>
@@ -217,7 +258,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
     <div id="fnrow" class="fg" style="display:none">
       <label>肥料の種類・メモ</label>
-      <textarea id="fertnote" placeholder="例：ハイポネックス液肥1000倍 / 鶏糞ペレット"></textarea>
+      <textarea id="fertnote" placeholder="例：ハイポネックス液肥1000倍 / 鶏糞ペレット / 骨粉など"></textarea>
     </div>
     <div class="fg">
       <label>天気</label>
@@ -251,10 +292,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div id="smgr-list"></div>
     <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)">
       <div class="fg"><label>新しい苗の名前</label><input type="text" id="new-s-name" placeholder="例：ミニトマト千果・大玉桃太郎"></div>
+      <div class="fg"><label>開始日</label><input type="date" id="new-s-date"></div>
       <div class="sbtns">
         <button class="bcx" onclick="closeSMgr()">閉じる</button>
         <button class="bsv" onclick="addSeedling()">追加する</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- 野菜追加シート -->
+<div class="modal-bg" id="veg-overlay" onclick="bgClick(event,'veg-overlay')">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>🥬 野菜を追加する</h3>
+    <div class="fg"><label>野菜を選ぶ（あいうえお順）</label>
+      <div class="veg-select-grid" id="veg-select-grid"></div>
+    </div>
+    <div class="fg"><label>または直接入力</label><input type="text" id="custom-veg-name" placeholder="例：🌽 トウモロコシ"></div>
+    <div class="fg"><label>最初の苗の名前</label><input type="text" id="first-seedling-name" placeholder="例：第1苗・品種名"></div>
+    <div class="fg"><label>開始日</label><input type="date" id="first-seedling-date"></div>
+    <div class="sbtns">
+      <button class="bcx" onclick="closeVegSheet()">キャンセル</button>
+      <button class="bsv" onclick="addVegFromSheet()">追加する</button>
     </div>
   </div>
 </div>
@@ -264,68 +324,80 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="det-sheet" id="det-sheet"></div>
 </div>
 
+<!-- 写真拡大 -->
+<div class="photo-vp" id="photo-vp" onclick="closePhoto()">
+  <button class="photo-close" onclick="closePhoto()">✕</button>
+  <img id="photo-big" src="" alt="写真">
+</div>
+
 <script>
 const WX_ICON={sunny:'☀️',rain:'🌧️',drizzle:'🌦️'};
 const WX_LABEL={sunny:'晴れ',rain:'雨',drizzle:'小雨'};
 const ACT={
-  water:{label:'水やり',dot:'dw',bg:'#E6F1FB',em:'💧',dc:'#378ADD'},
-  fert:{label:'追肥',dot:'df',bg:'#FAEEDA',em:'🌿',dc:'#BA7517'},
-  prune:{label:'葉かき',dot:'dp',bg:'#EAF3DE',em:'✂️',dc:'#639922'},
-  pinch:{label:'摘心',dot:'di',bg:'#EEEDFE',em:'🤏',dc:'#7F77DD'},
-  harvest:{label:'収穫',dot:'dh',bg:'#FAECE7',em:'🧺',dc:'#D85A30'},
-  trouble:{label:'トラブル',dot:'dt',bg:'#FCEBEB',em:'⚠️',dc:'#E24B4A'},
+  water:{label:'水やり',bg:'#E3F0FB',em:'💧',dc:'var(--blue)',cls:'aico-water'},
+  fert:{label:'追肥',bg:'#FDF0DC',em:'🌿',dc:'var(--amber)',cls:'aico-fert'},
+  prune:{label:'葉かき',bg:'#EAF3DE',em:'✂️',dc:'var(--green2)',cls:'aico-prune'},
+  pinch:{label:'摘心',bg:'#EEEDFE',em:'🤏',dc:'var(--purple)',cls:'aico-pinch'},
+  harvest:{label:'収穫',bg:'#FAECE7',em:'🧺',dc:'var(--coral)',cls:'aico-harvest'},
+  trouble:{label:'トラブル',bg:'#FCEBEB',em:'⚠️',dc:'var(--red)',cls:'aico-trouble'},
 };
+
+// あいうえお順の野菜リスト
+const VEG_LIST=[
+  '🫑 青ピーマン','🌿 青シソ','🍓 イチゴ','🫛 インゲン','🌿 エダマメ',
+  '🍆 ナス','🥒 キュウリ','🥬 キャベツ','🥦 ブロッコリー','🧅 タマネギ',
+  '🌽 トウモロコシ','🍅 トマト','🍅 ミニトマト','🥕 ニンジン','🧄 ニンニク',
+  '🌿 バジル','🥬 ハクサイ','🌿 パセリ','🫛 サヤエンドウ','🥬 サニーレタス',
+  '🥬 レタス','🌿 ルッコラ','🥬 ホウレンソウ','🥬 コマツナ','🥬 チンゲンサイ',
+  '🌿 ミョウガ','🧅 ネギ','🥔 ジャガイモ','🍠 サツマイモ','🎃 カボチャ',
+];
 
 function ld(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
 function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
-let vegs=ld('gv3_vegs',[
+let vegs=ld('gv4_vegs',[
   {id:'tomato',label:'🍅 トマト',seedlings:[
-    {id:'s1',name:'第1苗',ended:false},
-    {id:'s2',name:'第2苗',ended:false}
+    {id:'s1',name:'第1苗',ended:false,startDate:''},
+    {id:'s2',name:'第2苗',ended:false,startDate:''},
   ]},
-  {id:'cucumber',label:'🥒 キュウリ',seedlings:[{id:'s3',name:'プランターA',ended:false}]},
-  {id:'eggplant',label:'🍆 ナス',seedlings:[{id:'s4',name:'畑1番',ended:false}]},
-  {id:'basil',label:'🌿 バジル',seedlings:[{id:'s5',name:'キッチン',ended:false}]},
+  {id:'cucumber',label:'🥒 キュウリ',seedlings:[{id:'s3',name:'プランターA',ended:false,startDate:''}]},
+  {id:'eggplant',label:'🍆 ナス',seedlings:[{id:'s4',name:'畑1番',ended:false,startDate:''}]},
+  {id:'basil',label:'🌿 バジル',seedlings:[{id:'s5',name:'キッチン',ended:false,startDate:''}]},
 ]);
-let logs=ld('gv3_logs',{});
+let logs=ld('gv4_logs',{});
 
 const thisYear=new Date().getFullYear();
 let curY=thisYear,curM=new Date().getMonth();
 let curVeg=0,curS=0,curDay=null,curAct=null,curWx=null,curPhoto=null;
-let curView='cal',curFilter='all';
-let showEnded=false;
+let curView='cal',curFilter='all',showEnded=false;
+let selVegLabel='';
 
 function lk(vid,sid,y,m,d){return `${vid}|${sid}|${y}-${m}-${d}`;}
-function getSeedlings(veg,inclEnded){
-  const s=veg.seedlings||[];
-  if(inclEnded)return s;
-  const active=s.filter(x=>!x.ended);
-  return active.length>0?active:s;// always show at least one
-}
 function curSeedling(){return (vegs[curVeg].seedlings||[])[curS]||null;}
-function curSid(){const s=curSeedling();return s?s.id:null;}
 function getE(vid,sid,y,m,d){return logs[lk(vid,sid,y,m,d)]||[];}
 function curE(d){const s=curSeedling();if(!s)return[];return getE(vegs[curVeg].id,s.id,d);}
 
+function daysSince(dateStr){
+  if(!dateStr)return null;
+  const start=new Date(dateStr);const now=new Date();
+  const diff=Math.floor((now-start)/(1000*60*60*24));
+  return diff>=0?diff:null;
+}
+
 /* YEAR BAR */
-function getAvailableYears(){
+function getYears(){
   const years=new Set([thisYear]);
-  Object.keys(logs).forEach(k=>{
-    const m=k.match(/\|(\d{4})-/);
-    if(m)years.add(Number(m[1]));
-  });
+  Object.keys(logs).forEach(k=>{const m=k.match(/\|(\d{4})-/);if(m)years.add(Number(m[1]));});
   return [...years].sort((a,b)=>b-a);
 }
 function renderYearBar(){
-  const years=getAvailableYears();
-  document.getElementById('yearbar').innerHTML=years.map(y=>
+  document.getElementById('yearbar').innerHTML=getYears().map(y=>
     `<button class="ypill${curY===y?' active':''}" onclick="selYear(${y})">${y}年</button>`
   ).join('');
 }
 function selYear(y){curY=y;curDay=null;renderAll();}
 
-/* HARVEST BANNER */
+/* BANNER */
 function htotals(){
   const veg=vegs[curVeg];const res={};
   (veg.seedlings||[]).forEach(s=>{
@@ -335,15 +407,15 @@ function htotals(){
         if(l.act==='harvest'&&l.qty){tot+=Number(l.qty);if(l.unit)unit=l.unit;}
       });
     }
-    if(tot>0)res[s.name]={tot,unit};
+    if(tot>0)res[s.id]={tot,unit,name:s.name};
   });
   return res;
 }
 function renderBanner(){
   const t=htotals();const veg=vegs[curVeg];
   document.getElementById('hbanner').innerHTML=(veg.seedlings||[]).map(s=>{
-    const v=t[s.name];
-    return `<div class="hpill">${s.name}${s.ended?'（終了）':''}：収穫 <strong>${v?v.tot+v.unit:'0個'}</strong></div>`;
+    const v=t[s.id];
+    return `<div class="hpill">${s.name}：収穫 <strong>${v?v.tot+v.unit:'0個'}</strong></div>`;
   }).join('')||'<div class="hpill" style="opacity:.5">記録なし</div>';
 }
 
@@ -352,24 +424,27 @@ function renderVTabs(){
   document.getElementById('vtabs').innerHTML=vegs.map((v,i)=>{
     const allEnded=(v.seedlings||[]).every(s=>s.ended);
     return `<button class="vtab${i===curVeg?' active':''}${allEnded?' ended':''}" onclick="selVeg(${i})">${v.label}</button>`;
-  }).join('')+`<button style="padding:10px 12px;white-space:nowrap;font-size:12px;color:var(--tx3);cursor:pointer;border:none;background:none;flex-shrink:0" onclick="openVegMgr()">＋ 野菜追加</button>`;
+  }).join('')+`<button style="padding:10px 12px;white-space:nowrap;font-size:12px;color:var(--tx3);cursor:pointer;border:none;background:none;flex-shrink:0" onclick="openVegSheet()">＋ 野菜追加</button>`;
 }
 
 /* SEEDLING TABS */
 function renderSTabs(){
-  const veg=vegs[curVeg];
-  const seeds=veg.seedlings||[];
+  const veg=vegs[curVeg];const seeds=veg.seedlings||[];
   const active=seeds.filter(s=>!s.ended);
   const ended=seeds.filter(s=>s.ended);
-  let html=active.map((s,i)=>{
-    const realIdx=seeds.indexOf(s);
-    return `<button class="schip${realIdx===curS?' active':''}" onclick="selS(${realIdx})">${s.name}</button>`;
+  let html=active.map(s=>{
+    const ri=seeds.indexOf(s);
+    const days=daysSince(s.startDate);
+    const dayTxt=days!==null?`<span class="day-badge">${days}日目</span>`:'';
+    return `<button class="schip${ri===curS?' active':''}" onclick="selS(${ri})">${s.name}${dayTxt}</button>`;
   }).join('');
   if(ended.length>0){
     if(showEnded){
       html+=ended.map(s=>{
-        const realIdx=seeds.indexOf(s);
-        return `<button class="schip ended${realIdx===curS?' active':''}" onclick="selS(${realIdx})">${s.name}<span class="ended-badge">終了</span></button>`;
+        const ri=seeds.indexOf(s);
+        const days=daysSince(s.startDate);
+        const dayTxt=days!==null?`<span class="day-badge">${days}日目</span>`:'';
+        return `<button class="schip ended${ri===curS?' active':''}" onclick="selS(${ri})">${s.name}${dayTxt}<span class="ended-badge">終了</span></button>`;
       }).join('');
       html+=`<button style="padding:5px 10px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid var(--tx3);background:none;color:var(--tx3);white-space:nowrap;flex-shrink:0" onclick="toggleEnded()">▲ 隠す</button>`;
     } else {
@@ -389,7 +464,7 @@ function renderCal(){
   const off=(first===0)?6:first-1;
   const days=new Date(curY,curM+1,0).getDate();
   const today=new Date();
-  const sid=curSid();
+  const sid=curSeedling()?curSeedling().id:null;
   for(let i=0;i<off;i++){
     const c=document.createElement('div');c.className='ccell om';
     c.innerHTML=`<div class="dnum">${new Date(curY,curM,1-off+i).getDate()}</div>`;
@@ -408,7 +483,8 @@ function renderCal(){
       });
     });
     const wx=ents.length>0&&ents[0].wx?WX_ICON[ents[0].wx]||'':'';
-    c.innerHTML=`<div class="dnum">${d}</div><div class="drow">${acts.map(a=>`<div class="dot ${ACT[a].dot}"></div>`).join('')}</div>${htot>0?`<div class="hnum">${htot}</div>`:''}${wx?`<div class="wxc">${wx}</div>`:''}`;
+    const iconsHtml=acts.map(a=>`<span class="aico aico-${a}"></span>`).join('');
+    c.innerHTML=`<div class="dnum">${d}</div><div class="irow">${iconsHtml}</div>${htot>0?`<div class="hnum">${htot}</div>`:''}${wx?`<div class="wxc">${wx}</div>`:''}`;
     c.onclick=()=>selDay(d);
     grid.appendChild(c);
   }
@@ -424,23 +500,26 @@ function renderDayLog(){
   let h='';
   if(isEnded)h+=`<div class="ended-notice">⚠️ この苗は栽培終了済みです。記録の閲覧のみできます。</div>`;
   h+=`<div class="dl-title"><span>${curM+1}月${curDay}日 — ${s?s.name:''}</span>${!isEnded?`<button class="add-sm" onclick="openSheet()">＋ 追加</button>`:''}</div>`;
-  if(!ents.length){h+='<div class="empty" style="padding:10px 0">記録なし</div>';}
-  else ents.forEach((e,ei)=>{
-    const m=ACT[e.act];
-    const q=e.act==='harvest'&&e.qty?` — ${e.qty}${e.unit||'個'}` :'';
-    const wx=e.wx?` ${WX_ICON[e.wx]||''}` :'';
-    h+=`<div class="lentry" onclick="showDet(${ei})">
-      <div class="licon" style="background:${m.bg}">${m.em}</div>
-      <div class="lbody">
-        <div class="ltype">${m.label}${q}${wx}</div>
-        <div class="lmeta">${s?s.name:''}</div>
-        ${e.fertnote?`<div class="lnote">🌿 ${e.fertnote}</div>`:''}
-        ${e.memo?`<div class="lnote">📝 ${e.memo}</div>`:''}
-        ${e.photo?`<img src="${e.photo}" class="lphoto" alt="写真">`:''}
-      </div>
-      ${!isEnded?`<button class="delbtn" onclick="event.stopPropagation();delLog(${ei})" aria-label="削除">🗑</button>`:''}
-    </div>`;
-  });
+  if(!ents.length){
+    h+='<div class="empty" style="padding:10px 0">この日の記録はありません</div>';
+  } else {
+    ents.forEach((e,ei)=>{
+      const m=ACT[e.act];
+      const q=e.act==='harvest'&&e.qty?` — ${e.qty}${e.unit||'個'}` :'';
+      const wx=e.wx?` ${WX_ICON[e.wx]||''}` :'';
+      h+=`<div class="lentry" onclick="showDet(${ei})">
+        <div class="licon" style="background:${m.bg}">${m.em}</div>
+        <div class="lbody">
+          <div class="ltype">${m.label}${q}${wx}</div>
+          <div class="lmeta">${s?s.name:''}</div>
+          ${e.fertnote?`<div class="lnote">🌿 <strong>肥料：</strong>${e.fertnote}</div>`:''}
+          ${e.memo?`<div class="lnote">📝 ${e.memo}</div>`:''}
+          ${e.photo?`<img src="${e.photo}" class="lphoto" alt="写真" onclick="event.stopPropagation();openPhoto('${e.photo}')">`:''}
+        </div>
+        ${!isEnded?`<button class="delbtn" onclick="event.stopPropagation();delLog(${ei})" aria-label="削除">🗑</button>`:''}
+      </div>`;
+    });
+  }
   if(!isEnded)h+=`<button class="addlogbtn" onclick="openSheet()">＋ 作業を記録する</button>`;
   el.innerHTML=h;
 }
@@ -453,7 +532,7 @@ function showDet(ei){
   document.getElementById('det-sheet').innerHTML=`
     <div class="det-hdr">
       <div><div class="dicon" style="background:${m.bg}">${m.em}</div>
-      <div style="font-size:15px;font-weight:600;color:var(--tx)">${m.label}</div></div>
+      <div style="font-size:15px;font-weight:700;color:var(--tx)">${m.label}</div></div>
       <button class="closebtn" onclick="closeDet()">✕</button>
     </div>
     <div class="drow"><span class="dlbl">日付</span><span class="dval">${curY}年${curM+1}月${curDay}日</span></div>
@@ -462,22 +541,20 @@ function showDet(ei){
     <div class="drow"><span class="dlbl">天気</span><span class="dval">${e.wx?WX_ICON[e.wx]+' '+WX_LABEL[e.wx]:'—'}</span></div>
     ${e.act==='harvest'?`<div class="drow"><span class="dlbl">収穫量</span><span class="dval">${q}</span></div>`:''}
     ${e.act==='fert'?`<div class="drow"><span class="dlbl">肥料</span><span class="dval">${e.fertnote||'—'}</span></div>`:''}
-    <div class="drow"><span class="dlbl">メモ</span><span class="dval">${e.memo||'—'}</span></div>
-    ${e.photo?`<img src="${e.photo}" class="dphoto" alt="写真">`:''}`;
+    <div class="drow"><span class="dlbl">メモ</span><span class="dval">${e.memo||'記録なし'}</span></div>
+    ${e.photo?`<img src="${e.photo}" class="dphoto" alt="写真" onclick="openPhoto('${e.photo}')">`:''}`;
   document.getElementById('det-overlay').classList.add('open');
 }
 function closeDet(){document.getElementById('det-overlay').classList.remove('open');}
+function openPhoto(src){document.getElementById('photo-big').src=src;document.getElementById('photo-vp').classList.add('open');}
+function closePhoto(){document.getElementById('photo-vp').classList.remove('open');}
 
 /* TIMELINE */
 function renderTL(){
   const s=curSeedling();
   const fa=curFilter==='all'?null:curFilter;
   const all=[];
-  for(let d=1;d<=31;d++){
-    curE(d).forEach((e,ei)=>{
-      if(!fa||e.act===fa)all.push({d,e,ei});
-    });
-  }
+  for(let d=1;d<=31;d++){curE(d).forEach((e,ei)=>{if(!fa||e.act===fa)all.push({d,e,ei});});}
   document.getElementById('filterbar').innerHTML=[
     {k:'all',l:'すべて'},{k:'fert',l:'追肥のみ'},{k:'trouble',l:'トラブルのみ'}
   ].map(f=>`<button class="fbtn${curFilter===f.k?' active':''}" onclick="setFilter('${f.k}')">${f.l}</button>`).join('');
@@ -491,9 +568,9 @@ function renderTL(){
       <div class="tl-body">
         <div class="tl-type">${m.em} ${m.label}${q}</div>
         <div class="tl-meta">${s?s.name:''}</div>
-        ${e.act==='fert'&&e.fertnote?`<div class="tl-note">🌿 ${e.fertnote}</div>`:''}
+        ${e.act==='fert'&&e.fertnote?`<div class="tl-note">🌿 <strong>肥料：</strong>${e.fertnote}</div>`:''}
         ${e.memo?`<div class="tl-note">📝 ${e.memo}</div>`:''}
-        ${e.photo?`<img src="${e.photo}" class="tl-photo" alt="写真">`:''}
+        ${e.photo?`<img src="${e.photo}" class="tl-photo" alt="写真" onclick="event.stopPropagation();openPhoto('${e.photo}')">`:''}
       </div>
     </div>`;
   }).join('');
@@ -503,68 +580,91 @@ function renderTL(){
 function openSMgr(){
   renderSMgrList();
   document.getElementById('new-s-name').value='';
+  document.getElementById('new-s-date').value=new Date().toISOString().slice(0,10);
   document.getElementById('smgr-overlay').classList.add('open');
 }
 function closeSMgr(){document.getElementById('smgr-overlay').classList.remove('open');}
 function renderSMgrList(){
   const veg=vegs[curVeg];
-  document.getElementById('smgr-list').innerHTML=(veg.seedlings||[]).map((s,i)=>`
-    <div class="smgr-item">
+  document.getElementById('smgr-list').innerHTML=(veg.seedlings||[]).map((s,i)=>{
+    const days=daysSince(s.startDate);
+    const dayTxt=days!==null?`・${days}日目`:'';
+    const dateTxt=s.startDate?`開始：${s.startDate}${dayTxt}`:'開始日未設定';
+    return `<div class="smgr-item">
       <div class="smgr-row">
-        <span class="smgr-name">${s.name}${s.ended?'<span class="smgr-ended">栽培終了</span>':''}</span>
+        <div>
+          <div class="smgr-name">${s.name}${s.ended?' <span style="font-size:10px;background:var(--tx3);color:#fff;padding:1px 5px;border-radius:4px">終了</span>':''}</div>
+          <div class="smgr-sub">${dateTxt}</div>
+        </div>
         <div class="smgr-btns">
           <button class="smgr-btn" onclick="renameSeedling(${i})">名前変更</button>
-          <button class="smgr-btn ${s.ended?'green':'red'}" onclick="toggleSeedlingEnd(${i})">${s.ended?'再開':'終了'}</button>
+          <button class="smgr-btn" onclick="editStartDate(${i})">日付変更</button>
+          <button class="smgr-btn ${s.ended?'green':'red'}" onclick="toggleEnd(${i})">${s.ended?'再開':'終了'}</button>
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 function addSeedling(){
   const name=document.getElementById('new-s-name').value.trim();
   if(!name){showToast('苗の名前を入力してください');return;}
+  const startDate=document.getElementById('new-s-date').value;
   const id='s'+Date.now();
-  vegs[curVeg].seedlings.push({id,name,ended:false});
-  sv('gv3_vegs',vegs);
-  renderSMgrList();
+  vegs[curVeg].seedlings.push({id,name,ended:false,startDate});
+  sv('gv4_vegs',vegs);renderSMgrList();
   document.getElementById('new-s-name').value='';
   renderAll();showToast(`「${name}」を追加しました`);
 }
 function renameSeedling(i){
   const s=vegs[curVeg].seedlings[i];
-  const newName=prompt(`「${s.name}」の新しい名前を入力`,s.name);
-  if(!newName||!newName.trim())return;
-  s.name=newName.trim();
-  sv('gv3_vegs',vegs);
-  renderSMgrList();renderAll();showToast('名前を変更しました');
+  const n=prompt(`「${s.name}」の新しい名前`,s.name);
+  if(!n||!n.trim())return;
+  s.name=n.trim();sv('gv4_vegs',vegs);renderSMgrList();renderAll();showToast('名前を変更しました');
 }
-function toggleSeedlingEnd(i){
+function editStartDate(i){
   const s=vegs[curVeg].seedlings[i];
-  s.ended=!s.ended;
-  sv('gv3_vegs',vegs);
-  renderSMgrList();
-  if(curS===i&&s.ended){
-    // 終了した苗を選んでいた場合、アクティブな苗に切り替え
-    const active=vegs[curVeg].seedlings.findIndex(x=>!x.ended);
-    if(active>=0)curS=active;
-  }
-  renderAll();showToast(s.ended?`「${s.name}」を栽培終了にしました`:`「${s.name}」を再開しました`);
+  const d=prompt(`「${s.name}」の開始日（YYYY-MM-DD形式）`,s.startDate||new Date().toISOString().slice(0,10));
+  if(!d)return;
+  s.startDate=d.trim();sv('gv4_vegs',vegs);renderSMgrList();renderAll();showToast('開始日を更新しました');
+}
+function toggleEnd(i){
+  const s=vegs[curVeg].seedlings[i];s.ended=!s.ended;
+  sv('gv4_vegs',vegs);renderSMgrList();
+  if(curS===i&&s.ended){const a=vegs[curVeg].seedlings.findIndex(x=>!x.ended);if(a>=0)curS=a;}
+  renderAll();showToast(s.ended?`「${s.name}」を終了しました`:`「${s.name}」を再開しました`);
 }
 
-/* VEG MANAGER */
-function openVegMgr(){
-  const name=prompt('新しい野菜の名前（例：🍅 ミニトマト）');
-  if(!name||!name.trim())return;
-  const seedling=prompt('最初の苗の名前（例：第1苗・品種名）')||'第1苗';
-  vegs.push({id:'veg_'+Date.now(),label:name.trim(),seedlings:[{id:'s'+Date.now(),name:seedling.trim(),ended:false}]});
-  sv('gv3_vegs',vegs);renderAll();showToast(`${name}を追加しました`);
+/* VEG SHEET */
+function openVegSheet(){
+  selVegLabel='';
+  document.getElementById('custom-veg-name').value='';
+  document.getElementById('first-seedling-name').value='第1苗';
+  document.getElementById('first-seedling-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('veg-select-grid').innerHTML=VEG_LIST.map(v=>
+    `<button class="veg-sel-btn" onclick="selVegPreset('${v}',this)">${v}</button>`
+  ).join('');
+  document.getElementById('veg-overlay').classList.add('open');
+}
+function closeVegSheet(){document.getElementById('veg-overlay').classList.remove('open');}
+function selVegPreset(v,btn){
+  selVegLabel=v;
+  document.querySelectorAll('.veg-sel-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  document.getElementById('custom-veg-name').value='';
+}
+function addVegFromSheet(){
+  const label=(document.getElementById('custom-veg-name').value.trim()||selVegLabel).trim();
+  if(!label){showToast('野菜を選ぶか直接入力してください');return;}
+  const seedling=document.getElementById('first-seedling-name').value.trim()||'第1苗';
+  const startDate=document.getElementById('first-seedling-date').value;
+  vegs.push({id:'veg_'+Date.now(),label,seedlings:[{id:'s'+Date.now(),name:seedling,ended:false,startDate}]});
+  sv('gv4_vegs',vegs);closeVegSheet();renderAll();showToast(`${label}を追加しました`);
 }
 
+/* ACTIONS */
 function setView(v){
   curView=v;
-  if(v==='fert')curFilter='fert';
-  else if(v==='trouble')curFilter='trouble';
-  else curFilter='all';
+  curFilter=v==='fert'?'fert':v==='trouble'?'trouble':'all';
   document.getElementById('view-cal').style.display=v==='cal'?'block':'none';
   document.getElementById('view-tl').style.display=v!=='cal'?'block':'none';
   ['cal','fert','trouble'].forEach(id=>{
@@ -580,8 +680,8 @@ function openSheet(){
   if(!curDay){showToast('日付を先に選んでください');return;}
   if(s&&s.ended){showToast('栽培終了の苗には記録できません');return;}
   curAct=null;curWx=null;curPhoto=null;
-  ['ab-water','ab-fert','ab-prune','ab-pinch','ab-harvest','ab-trouble'].forEach(id=>document.getElementById(id).classList.remove('sel'));
-  ['wx-sunny','wx-rain','wx-drizzle'].forEach(id=>document.getElementById(id).classList.remove('sel'));
+  ['water','fert','prune','pinch','harvest','trouble'].forEach(a=>document.getElementById('ab-'+a).classList.remove('sel'));
+  ['sunny','rain','drizzle'].forEach(w=>document.getElementById('wx-'+w).classList.remove('sel'));
   document.getElementById('memoinput').value='';
   document.getElementById('fertnote').value='';
   document.getElementById('hqty').value=1;
@@ -595,22 +695,22 @@ function openSheet(){
 }
 function closeSheet(){document.getElementById('overlay').classList.remove('open');}
 function bgClick(e,id){
-  if(e.target===document.getElementById(id)){
-    if(id==='overlay')closeSheet();
-    else if(id==='smgr-overlay')closeSMgr();
-    else closeDet();
-  }
+  if(e.target!==document.getElementById(id))return;
+  if(id==='overlay')closeSheet();
+  else if(id==='smgr-overlay')closeSMgr();
+  else if(id==='veg-overlay')closeVegSheet();
+  else closeDet();
 }
 function selAct(a){
   curAct=a;
-  ['ab-water','ab-fert','ab-prune','ab-pinch','ab-harvest','ab-trouble'].forEach(id=>document.getElementById(id).classList.remove('sel'));
+  ['water','fert','prune','pinch','harvest','trouble'].forEach(x=>document.getElementById('ab-'+x).classList.remove('sel'));
   document.getElementById('ab-'+a).classList.add('sel');
   document.getElementById('hqrow').style.display=a==='harvest'?'block':'none';
   document.getElementById('fnrow').style.display=a==='fert'?'block':'none';
 }
 function selWx(w){
   curWx=w;
-  ['wx-sunny','wx-rain','wx-drizzle'].forEach(id=>document.getElementById(id).classList.remove('sel'));
+  ['sunny','rain','drizzle'].forEach(x=>document.getElementById('wx-'+x).classList.remove('sel'));
   document.getElementById('wx-'+w).classList.add('sel');
 }
 function prevPhoto(inp){
@@ -632,15 +732,14 @@ function saveLog(){
     unit:document.getElementById('hunit').value,
     fertnote:curAct==='fert'?document.getElementById('fertnote').value.trim():'',
   });
-  sv('gv3_logs',logs);
-  closeSheet();renderAll();
+  sv('gv4_logs',logs);closeSheet();renderAll();
   showToast(`${ACT[curAct].label}を記録しました`);
 }
 function delLog(ei){
   const s=curSeedling();if(!s)return;
   const k=lk(vegs[curVeg].id,s.id,curY,curM,curDay);
   if(logs[k])logs[k].splice(ei,1);
-  sv('gv3_logs',logs);renderAll();showToast('削除しました');
+  sv('gv4_logs',logs);renderAll();showToast('削除しました');
 }
 function selVeg(i){curVeg=i;curS=0;curDay=null;showEnded=false;renderAll();}
 function selS(i){curS=i;renderAll();}
@@ -649,6 +748,38 @@ function chMonth(dir){
   curM+=dir;if(curM>11){curM=0;curY++;}if(curM<0){curM=11;curY--;}
   curDay=null;renderAll();
 }
+
+/* EXPORT / IMPORT */
+function exportData(){
+  const data={version:2,exportDate:new Date().toISOString(),vegs:ld('gv4_vegs',[]),logs:ld('gv4_logs',{})};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`菜園バックアップ_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();URL.revokeObjectURL(url);
+  showToast('バックアップを保存しました');
+}
+function importData(){
+  const input=document.createElement('input');input.type='file';input.accept='.json';
+  input.onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const data=JSON.parse(ev.target.result);
+        if(!data.vegs||!data.logs){showToast('ファイルの形式が正しくありません');return;}
+        if(!confirm('現在のデータをバックアップで上書きします。よろしいですか？'))return;
+        sv('gv4_vegs',data.vegs);sv('gv4_logs',data.logs);
+        vegs=data.vegs;logs=data.logs;
+        curVeg=0;curS=0;curDay=null;renderAll();
+        showToast('データを復元しました！');
+      }catch(err){showToast('読み込みに失敗しました');}
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
 function renderAll(){renderYearBar();renderBanner();renderVTabs();renderSTabs();renderCal();renderDayLog();if(curView!=='cal')renderTL();}
 function showToast(msg){
   const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
@@ -659,72 +790,3 @@ renderAll();
 </script>
 </body>
 </html>
-<script>
-// ===== エクスポート・インポート機能 =====
-
-function exportData() {
-  const data = {
-    version: 1,
-    exportDate: new Date().toISOString(),
-    vegs: JSON.parse(localStorage.getItem('gv3_vegs') || '[]'),
-    logs: JSON.parse(localStorage.getItem('gv3_logs') || '{}'),
-  };
-  const json = JSON.stringify(data, null, 2);
-  const blob = new Blob([json], {type: 'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  const date = new Date().toISOString().slice(0,10);
-  a.href = url;
-  a.download = `菜園バックアップ_${date}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-  showToast('バックアップファイルを保存しました');
-}
-
-function importData() {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.json';
-  input.onchange = e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      try {
-        const data = JSON.parse(ev.target.result);
-        if (!data.vegs || !data.logs) {
-          showToast('ファイルの形式が正しくありません');
-          return;
-        }
-        if (!confirm('現在のデータをバックアップのデータで上書きします。よろしいですか？')) return;
-        localStorage.setItem('gv3_vegs', JSON.stringify(data.vegs));
-        localStorage.setItem('gv3_logs', JSON.stringify(data.logs));
-        vegs = data.vegs;
-        logs = data.logs;
-        curVeg = 0; curS = 0; curDay = null;
-        renderAll();
-        showToast('データを復元しました！');
-      } catch(err) {
-        showToast('ファイルの読み込みに失敗しました');
-      }
-    };
-    reader.readAsText(file);
-  };
-  input.click();
-}
-
-// バックアップボタンをアプリ下部に追加
-window.addEventListener('load', () => {
-  const bar = document.createElement('div');
-  bar.style.cssText = 'background:var(--sur);border-top:1px solid var(--bd);padding:12px;display:flex;gap:8px;position:sticky;bottom:0;max-width:430px;margin:0 auto;';
-  bar.innerHTML = `
-    <button onclick="exportData()" style="flex:1;padding:10px;border-radius:var(--rs);border:1px solid var(--g-mid);background:var(--g-pale);color:var(--g-dark);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px">
-      📥 バックアップ保存
-    </button>
-    <button onclick="importData()" style="flex:1;padding:10px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sur2);color:var(--tx2);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px">
-      📤 データ復元
-    </button>
-  `;
-  document.querySelector('.app').appendChild(bar);
-});
-</script>
