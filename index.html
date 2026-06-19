@@ -70,6 +70,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .aico-pinch{background:var(--purple);clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
 .aico-harvest{background:var(--coral);clip-path:polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%)}
 .aico-trouble{background:var(--red);clip-path:polygon(50% 0%,0% 100%,100% 100%)}
+.aico-note{background:var(--tx3);border-radius:2px}
 .hnum{font-size:9px;color:var(--coral);font-weight:600;line-height:1;margin-top:1px}
 .wxc{font-size:9px;margin-top:1px}
 
@@ -270,7 +271,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
     <div class="fg">
       <label>写真</label>
-      <input type="file" id="photoinput" accept="image/*" capture="environment" onchange="prevPhoto(this)">
+      <input type="file" id="photoinput" accept="image/*" onchange="prevPhoto(this)">
       <img id="ppreview" class="ppreview" alt="プレビュー">
     </div>
     <div class="fg">
@@ -340,6 +341,7 @@ const ACT={
   pinch:{label:'摘心',bg:'#EEEDFE',em:'🤏',dc:'var(--purple)',cls:'aico-pinch'},
   harvest:{label:'収穫',bg:'#FAECE7',em:'🧺',dc:'var(--coral)',cls:'aico-harvest'},
   trouble:{label:'トラブル',bg:'#FCEBEB',em:'⚠️',dc:'var(--red)',cls:'aico-trouble'},
+  note:{label:'メモ',bg:'#F1F3F5',em:'📝',dc:'var(--tx3)',cls:'aico-note'},
 };
 
 // あいうえお順の野菜リスト
@@ -405,7 +407,7 @@ let selVegLabel='';
 function lk(vid,sid,y,m,d){return `${vid}|${sid}|${y}-${m}-${d}`;}
 function curSeedling(){return (vegs[curVeg].seedlings||[])[curS]||null;}
 function getE(vid,sid,y,m,d){return logs[lk(vid,sid,y,m,d)]||[];}
-function curE(d){const s=curSeedling();if(!s)return[];return getE(vegs[curVeg].id,s.id,d);}
+function curE(d){const s=curSeedling();if(!s)return[];return getE(vegs[curVeg].id,s.id,curY,curM,d);}
 
 function daysSince(dateStr){
   if(!dateStr)return null;
@@ -529,7 +531,7 @@ function renderDayLog(){
   const isEnded=s&&s.ended;
   let h='';
   if(isEnded)h+=`<div class="ended-notice">⚠️ この苗は栽培終了済みです。記録の閲覧のみできます。</div>`;
-  h+=`<div class="dl-title"><span>${curM+1}月${curDay}日 — ${s?s.name:''}</span>${!isEnded?`<button class="add-sm" onclick="openSheet()">＋ 追加</button>`:''}</div>`;
+  h+=`<div class="dl-title"><span>${curM+1}月${curDay}日 — ${s?s.name:''}</span></div>`;
   if(!ents.length){
     h+='<div class="empty" style="padding:10px 0">この日の記録はありません</div>';
   } else {
@@ -750,20 +752,25 @@ function prevPhoto(inp){
   r.readAsDataURL(inp.files[0]);
 }
 function saveLog(){
-  if(!curAct){showToast('作業の種類を選んでください');return;}
   const s=curSeedling();if(!s)return;
+  const memo=document.getElementById('memoinput').value.trim();
+  const fertnote=curAct==='fert'?document.getElementById('fertnote').value.trim():'';
+  if(!curAct&&!curWx&&!curPhoto&&!memo){
+    showToast('作業内容・天気・写真・メモのいずれかを入力してください');
+    return;
+  }
   const k=lk(vegs[curVeg].id,s.id,curY,curM,curDay);
   if(!logs[k])logs[k]=[];
   logs[k].push({
-    act:curAct,wx:curWx,
-    memo:document.getElementById('memoinput').value.trim(),
+    act:curAct||'note',wx:curWx,
+    memo,
     photo:curPhoto,
     qty:curAct==='harvest'?Number(document.getElementById('hqty').value)||1:null,
     unit:document.getElementById('hunit').value,
-    fertnote:curAct==='fert'?document.getElementById('fertnote').value.trim():'',
+    fertnote,
   });
   sv('gv4_logs',logs);closeSheet();renderAll();
-  showToast(`${ACT[curAct].label}を記録しました`);
+  showToast(`${curAct?ACT[curAct].label:'記録'}を保存しました`);
 }
 function delLog(ei){
   const s=curSeedling();if(!s)return;
