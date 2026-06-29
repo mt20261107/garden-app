@@ -355,7 +355,15 @@ const VEG_LIST=[
 ];
 
 function ld(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
-function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function sv(k,v){
+  try{
+    localStorage.setItem(k,JSON.stringify(v));
+    return true;
+  }catch(e){
+    console.error('Storage save failed:',e);
+    return false;
+  }
+}
 
 // 旧バージョンからのデータ移行
 function migrateData(){
@@ -509,11 +517,7 @@ function renderCal(){
     const ents=sid?getE(vegs[curVeg].id,sid,curY,curM,d):[];
     const acts=[...new Set(ents.map(e=>e.act))];
     let htot=0;
-    (vegs[curVeg].seedlings||[]).forEach(s=>{
-      (logs[lk(vegs[curVeg].id,s.id,curY,curM,d)]||[]).forEach(l=>{
-        if(l.act==='harvest'&&l.qty)htot+=Number(l.qty);
-      });
-    });
+    ents.forEach(l=>{if(l.act==='harvest'&&l.qty)htot+=Number(l.qty);});
     const wx=ents.length>0&&ents[0].wx?WX_ICON[ents[0].wx]||'':'';
     const iconsHtml=acts.map(a=>`<span class="aico aico-${a}"></span>`).join('');
     c.innerHTML=`<div class="dnum">${d}</div><div class="irow">${iconsHtml}</div>${htot>0?`<div class="hnum">${htot}</div>`:''}${wx?`<div class="wxc">${wx}</div>`:''}`;
@@ -748,7 +752,25 @@ function selWx(w){
 function prevPhoto(inp){
   if(!inp.files||!inp.files[0])return;
   const r=new FileReader();
-  r.onload=e=>{curPhoto=e.target.result;const i=document.getElementById('ppreview');i.src=curPhoto;i.style.display='block';};
+  r.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const maxDim=900;
+      let w=img.width,h=img.height;
+      if(w>maxDim||h>maxDim){
+        if(w>h){h=Math.round(h*maxDim/w);w=maxDim;}
+        else{w=Math.round(w*maxDim/h);h=maxDim;}
+      }
+      const canvas=document.createElement('canvas');
+      canvas.width=w;canvas.height=h;
+      const ctx=canvas.getContext('2d');
+      ctx.drawImage(img,0,0,w,h);
+      curPhoto=canvas.toDataURL('image/jpeg',0.7);
+      const pv=document.getElementById('ppreview');
+      pv.src=curPhoto;pv.style.display='block';
+    };
+    img.src=e.target.result;
+  };
   r.readAsDataURL(inp.files[0]);
 }
 function saveLog(){
@@ -761,15 +783,32 @@ function saveLog(){
   }
   const k=lk(vegs[curVeg].id,s.id,curY,curM,curDay);
   if(!logs[k])logs[k]=[];
-  logs[k].push({
+  const entry={
     act:curAct||'note',wx:curWx,
     memo,
     photo:curPhoto,
     qty:curAct==='harvest'?Number(document.getElementById('hqty').value)||1:null,
     unit:document.getElementById('hunit').value,
     fertnote,
-  });
-  sv('gv4_logs',logs);closeSheet();renderAll();
+  };
+  logs[k].push(entry);
+  let ok=sv('gv4_logs',logs);
+  if(!ok&&curPhoto){
+    // 容量不足の場合、写真なしで再試行
+    logs[k][logs[k].length-1].photo=null;
+    ok=sv('gv4_logs',logs);
+    if(ok){
+      closeSheet();renderAll();
+      showToast('⚠️ 容量不足のため写真なしで保存しました');
+      return;
+    }
+  }
+  if(!ok){
+    logs[k].pop();
+    showToast('⚠️ 保存に失敗しました（容量不足の可能性）');
+    return;
+  }
+  closeSheet();renderAll();
   showToast(`${curAct?ACT[curAct].label:'記録'}を保存しました`);
 }
 function delLog(ei){
